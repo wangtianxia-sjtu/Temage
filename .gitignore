@@ -61,3 +61,4 @@ typings/
 .next
 # model file
 /tornado/model/demo/zhs.model
+tornado/model/demo/elmo/zhs.model/*
