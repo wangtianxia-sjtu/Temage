@@ -11,10 +11,17 @@ options = {
 # 配置
 settings = {
     # 修改代码后自动重启服务
-
+	
     "static_path": os.path.join(BASE_DIRS, 'static'),
 	"model_path": os.path.join(BASE_DIRS, 'model'),
     "template_path": os.path.join(BASE_DIRS, 'templates'),
+	"db":{
+		'dbname':'temage',
+		'user':'root',
+		'password':'',
+		'host':'127.0.0.1',
+		'port':'3306',
+	},
     # （不）进入调试模式（默认False）
-    "debug": False
+    "debug": True
 }

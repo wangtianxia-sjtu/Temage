@@ -62,3 +62,6 @@ typings/
 # model file
 /tornado/model/demo/zhs.model
 tornado/model/demo/elmo/zhs.model/*
+*.pyc
+# migrations
+/Django/Temage/migrations
