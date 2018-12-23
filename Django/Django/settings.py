@@ -135,3 +135,9 @@ CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8081',
 )
 CORS_ALLOW_CREDENTIALS = True 
+
+
+# Media
+PRE_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+MEDIA_ROOT = os.path.join(PRE_ROOT,'media')
+MEDIA_URL = '../media/'
