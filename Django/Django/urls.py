@@ -20,9 +20,11 @@ from django.conf.urls import url
 
 urlpatterns = [
     url(r'user/(.+)/', views.get_user),
+    url(r'^admin/', admin.site.urls),
     url(r'^api$', views.get_homepage_data),
     url(r'^api/work$', views.get_work_data),
     url(r'^api/gallery$', views.get_gallery_data),
     url(r'^api/collection$', views.get_collection_data),
     url(r'^api/recent$', views.get_rescent_data),
+    url(r'^login/submit', views.login_submit),
 ]

@@ -2,10 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+class Theme(models.Model):
+    tid = models.IntegerField()
+    tname = models.CharField(max_length=50)
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="extension")
     sex = models.BooleanField(default=0)
+    phone = models.CharField(max_length=15, null=False)
     avator = models.ImageField(upload_to='img/avator')
+    intrest = models.ManyToManyField(Theme)
     def __str__(self):
         return self.user.username
 
@@ -21,7 +27,7 @@ class Product(models.Model):
     ptitle = models.CharField(max_length=255)
     pimag = models.ImageField(upload_to='img/pimg')
     html = models.TextField(blank=True)
-    theme = models.CharField(max_length=225)
+    theme = models.ManyToManyField(Theme)
     #ppath = models.CharField(max_length=255)
     pscore = models.FloatField(null=True)
     time = models.DateTimeField(auto_now=True)
@@ -46,5 +52,6 @@ class Collection(models.Model):
     cards = models.ManyToManyField(Card)
     def __str__(self):
         return self.colname
+
 
     

@@ -9,7 +9,12 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 import json
-from django.core import serializers
+from django.contrib.auth import authenticate, login
+
+from django.views.decorators.csrf import csrf_exempt
+
+
+
 
 # Create your views here.
 def get_user(request, num):
@@ -64,4 +69,18 @@ def get_rescent_data(request):
     identity =  1
     recentpic = Product.objects.filter(pcreator=identity).values('ptitle', 'pimag')
     return HttpResponse(json.dumps(list(recentpic)), content_type="application/json")
-    
+
+@csrf_exempt    
+def login_submit(request):
+    if (request.method == 'POST'):
+        log_stat = "404"
+        post_body = json.loads(request.body)
+        username = post_body['username']
+        password = post_body['password']
+        user = authenticate(username = username, password = password)  
+        if user is not None:
+            login(request, user)
+            log_stat = "201"
+        return HttpResponse(json.dumps(log_stat), content_type="application/json")
+
+

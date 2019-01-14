@@ -134,10 +134,11 @@ STATIC_URL = '/static/'
 
 
 # cors Middleware
-CORS_ORIGIN_WHITELIST = (
-    '127.0.0.1:8081',
-)
-CORS_ALLOW_CREDENTIALS = True 
+# CORS_ORIGIN_WHITELIST = (
+#     '127.0.0.1:8081',
+# )
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Media
