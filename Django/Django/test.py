@@ -41,8 +41,8 @@ class ModelTest(TestCase):
 #  用例间的依赖关系: 无
 #  具体流程:
 #     步骤1
-#         输入: username="qxy"、password="123"
-# 		  期望输出: 正确码"200"
+#         输入: {username:"qxy", password:"123"}
+# 		  期望输出: status_code = 200
 # 		  实际输出: "200"
 # 		  备注: 无
 #  测试结果综合分析及建议: Succeed
@@ -50,5 +50,5 @@ class ModelTest(TestCase):
     def test_login(self):
         c = Client()
         response = c.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
-        print(response)
-        self.assertEqual(response.content.decode('utf-8'), '\"201\"')
+        self.assertEqual(response.status_code, 200)
+

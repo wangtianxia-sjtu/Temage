@@ -12,7 +12,7 @@ import json
 from django.contrib.auth import authenticate, login
 
 from django.views.decorators.csrf import csrf_exempt
-
+import jwt
 
 
 
@@ -57,30 +57,47 @@ def get_gallery_data(request):
 
 
 def get_collection_data(request):
-    #if request.user.is_authenticated():
-    #identity = request.user.id
     identity = 1
     collections = Collection.objects.filter(user__id=identity).values('cards__cproduct__ptitle', 'cards__cproduct__pimag', 'cards__curl', 'cards__cprompt')
     return HttpResponse(json.dumps(list(collections)), content_type="application/json")
 
 def get_rescent_data(request):
-    #if request.user.is_authenticated():
-    #identity = request.user.id
     identity =  1
     recentpic = Product.objects.filter(pcreator=identity).values('ptitle', 'pimag')
     return HttpResponse(json.dumps(list(recentpic)), content_type="application/json")
-
-@csrf_exempt    
+    
 def login_submit(request):
     if (request.method == 'POST'):
-        log_stat = "404"
+        log_stat = 404
         post_body = json.loads(request.body)
         username = post_body['username']
         password = post_body['password']
-        user = authenticate(username = username, password = password)  
-        if user is not None:
-            login(request, user)
-            log_stat = "201"
-        return HttpResponse(json.dumps(log_stat), content_type="application/json")
+        try:
+            user = authenticate(username=username, password=password)
+        except User.DoesNotExist:
+            return HttpResponse(status=400)
+        if user:
+            payload = {
+                'id': user.id,
+                'name': user.username,
+            }
+            return HttpResponse(
+              jwt.encode(payload, "Temage"),
+              status=200,
+              content_type="application/json"
+            )
 
-
+def JWTauthenticate(request):
+    if request.method == 'POST':
+        post_body = json.loads(request.body)
+        payload = jwt.decode(post_body['token'], "Temage")
+        try:
+            user = User.objects.get(id=payload['id'])
+        except:
+            return HttpResponse(status=400)
+        else:
+            return HttpResponse(
+                json.dumps({"username":user.username}),
+                status=200,
+                content_type="application/json"
+                )

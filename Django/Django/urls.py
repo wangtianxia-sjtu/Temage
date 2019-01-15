@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path
 from Temage import views
 from django.conf.urls import url
-
 urlpatterns = [
     url(r'user/(.+)/', views.get_user),
     url(r'^admin/', admin.site.urls),
@@ -27,4 +26,5 @@ urlpatterns = [
     url(r'^api/collection$', views.get_collection_data),
     url(r'^api/recent$', views.get_rescent_data),
     url(r'^login/submit', views.login_submit),
+    url(r'^authenticate', views.JWTauthenticate),
 ]

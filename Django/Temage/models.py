@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Theme(models.Model):
-    tid = models.IntegerField()
-    tname = models.CharField(max_length=50)
+    tname = models.CharField(max_length=50,default="tname")
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="extension")
@@ -16,15 +15,13 @@ class Profile(models.Model):
         return self.user.username
 
 class Style(models.Model):
-    sid = models.IntegerField(primary_key=True)
-    sname = models.CharField(max_length=50)
-    spath = models.CharField(max_length=255)
+    sname = models.CharField(max_length=50, default="name")
+    spath = models.CharField(max_length=255, default="path")
     def __str__(self):
         return self.sname
 
 class Product(models.Model):
-    pid = models.IntegerField()
-    ptitle = models.CharField(max_length=255)
+    ptitle = models.CharField(max_length=255, default="title")
     pimag = models.ImageField(upload_to='img/pimg')
     html = models.TextField(blank=True)
     theme = models.ManyToManyField(Theme)
@@ -37,8 +34,7 @@ class Product(models.Model):
         return self.ptitle
 
 class Card(models.Model):
-    cid = models.IntegerField()
-    curl = models.CharField(max_length=255)
+    curl = models.CharField(max_length=255, default="localhost")
     ccreator = models.ForeignKey(Profile, on_delete=models.CASCADE)
     cproduct = models.OneToOneField(Product, on_delete=models.DO_NOTHING)
     ctitle = models.CharField(max_length=50)
@@ -48,7 +44,7 @@ class Card(models.Model):
 
 class Collection(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    colname = models.CharField(max_length=50)
+    colname = models.CharField(max_length=50,default="name")
     cards = models.ManyToManyField(Card)
     def __str__(self):
         return self.colname
