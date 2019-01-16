@@ -65,3 +65,7 @@ tornado/model/demo/elmo/zhs.model/*
 *.pyc
 # migrations
 /Django/Temage/migrations
+
+# test resources
+test_file/
+media/

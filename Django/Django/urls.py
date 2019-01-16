@@ -27,4 +27,8 @@ urlpatterns = [
     url(r'^api/recent$', views.get_rescent_data),
     url(r'^login/submit', views.login_submit),
     url(r'^authenticate', views.JWTauthenticate),
+
+    # for quick model test
+    url(r'^setup', views.setupdb),
+    url(r'^clear', views.cleardb),
 ]
