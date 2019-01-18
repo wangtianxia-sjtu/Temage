@@ -145,6 +145,14 @@ def test(request):
     user = Profile.objects.get(user__id=1)
     themelist = user.theme.all().values('name')
     productlist = user.products.all().values('title')
-    collectionlist = user.collections.all().values('name', 'cards__title', 'cards__prompt')
-    relist = [list(themelist), list(productlist), list(collectionlist)]
+    collectionlist = user.collections.all()
+    collections = []
+    print(type(collectionlist))
+    for col in collectionlist:
+        cards  = col.cards.all()
+        cardinfo = []
+        for card in cards:
+            cardinfo.append([card.title, card.prompt])
+        collections.append([col.name, cardinfo])
+    relist = [list(themelist), list(productlist), collections]
     return HttpResponse(json.dumps(relist), content_type="application/json")
