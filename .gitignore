@@ -69,4 +69,3 @@ tornado/model/demo/elmo/zhs.model/*
 # test resources
 test_file/
 media/
-*.pyc
