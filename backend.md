@@ -23,12 +23,14 @@
    # you should be careful for ALLOWED_HOSTS, DATABASES
    ```
 
-3. migrate models into database
+3. migrate models into database(we have diy commands to simplify the process)
 
    ```shell
    cd /your/local/path/Temage/Django
+   python manage.py cleanmigration # clean migration files
+   python manage.py droptables # clean the db
    python manage.py makemigrations Temage # convert models to migrations
-   python manage.py migrate Temage # migrate
+   python manage.py migrate Temage # migrate into the database
    ```
 
 4. start Django server and Tornado server
