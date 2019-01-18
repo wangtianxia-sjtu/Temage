@@ -31,4 +31,5 @@ urlpatterns = [
     # for quick model test
     url(r'^setup', views.setupdb),
     url(r'^clear', views.cleardb),
+    url(r'^test', views.test),
 ]

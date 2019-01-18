@@ -140,3 +140,11 @@ def cleardb(request):
     Card.objects.all().delete()
     Collection.objects.all().delete()
     return HttpResponse(json.dumps("succeed"), content_type="application/json")
+
+def test(request):
+    user = Profile.objects.get(user__id=1)
+    themelist = user.theme.all().values('name')
+    productlist = user.products.all().values('title')
+    collectionlist = user.collections.all().values('name', 'cards__title', 'cards__prompt')
+    relist = [list(themelist), list(productlist), list(collectionlist)]
+    return HttpResponse(json.dumps(relist), content_type="application/json")
