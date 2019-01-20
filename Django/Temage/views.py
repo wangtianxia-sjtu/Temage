@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files import File
 import jwt
+import random
 
 
 
@@ -52,9 +53,41 @@ def get_gallery_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
-    cards =  Card.objects.values('product__title', 'product__imagesrc', 'url', 'prompt')
-    return HttpResponse(json.dumps(list(cards)), content_type="application/json")
+    cards =  Card.objects.all()
+    cardsInfo = []
+    if (cards.count() >= 7):
+        cards = cards[:7]
+    for card in cards:
+        cardinfo = {}
+        userInfo = {}
+        userInfo['username'] = card.creator.user.username
+        userInfo['id'] = card.creator.user.id
+        userInfo['avator'] = str(card.creator.avator)
+        cardinfo['prompt'] = card.prompt
+        cardinfo['url'] = card.url
+        cardinfo['creator'] = userInfo
+        cardinfo['title'] = card.title
+        cardsInfo.append(cardinfo)
+    return HttpResponse(json.dumps(cardsInfo), content_type="application/json")
 
+def get_gallery_more_cards(request):
+    token = request.META.get("HTTP_AUTHORIZATION")
+    payload = jwt.decode(token, "Temage")
+    identity = payload['id']
+    cards = Card.objects.order_by('?')[:4] 
+    cardsInfo = []
+    for card in cards:
+        cardinfo = {}
+        userInfo = {}
+        userInfo['username'] = card.creator.user.username
+        userInfo['id'] = card.creator.user.id
+        userInfo['avator'] = str(card.creator.avator)
+        cardinfo['prompt'] = card.prompt
+        cardinfo['url'] = card.url
+        cardinfo['creator'] = userInfo
+        cardinfo['title'] = card.title
+        cardsInfo.append(cardinfo)
+    return HttpResponse(json.dumps(cardsInfo), content_type="application/json")
 
 def get_collection_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
@@ -64,28 +97,28 @@ def get_collection_data(request):
     collections = []
     for col in collectionlist:
         cards  = col.cards.all()
-        cardsInfo = {}
+        cardsInfo = []
         for card in cards:
             userInfo = {}
+            cardinfo = {}
             userInfo['username'] = card.creator.user.username
             userInfo['id'] = card.creator.user.id
-            userInfo['avator'] = card.creator.avator
-            userInfo = list(card.creator.values('user__username', 'user__id', 'avator')
-            cardInfo['name'] = card.product.title
-            cardInfo['imagesrc'] = card.product.imagesrc
-            cardInfo['prompt'] = card.prompt
-            cardInfo['url'] = card.url
-            cardInfo['creator'] = userInfo
-            cardInfo['title'] = card.title
-            cardsInfo.append(cardInfo)
+            userInfo['avator'] = str(card.creator.avator)
+            cardinfo['name'] = card.product.title
+            cardinfo['imagesrc'] = str(card.product.imagesrc)
+            cardinfo['prompt'] = card.prompt
+            cardinfo['url'] = card.url
+            cardinfo['creator'] = userInfo
+            cardinfo['title'] = card.title
+            cardsInfo.append(cardinfo)
         collections.append(cardsInfo)
-    return HttpResponse(json.dumps(list(collections)), content_type="application/json")
+    return HttpResponse(json.dumps(collections), content_type="application/json")
 
 def get_rescent_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
-    recentpic = Product.objects.filter(creator=identity).values('title', 'imagesrc')
+    recentpic = Profile.objects.get(user__id=identity).cards.all().values('title', 'product__imagesrc', 'prompt', 'url')
     return HttpResponse(json.dumps(list(recentpic)), content_type="application/json")
     
 def login_submit(request):
@@ -122,6 +155,25 @@ def JWTauthenticate(request):
                 status=200,
                 content_type="application/json"
                 )
+
+def register(request):
+    if request.method == 'POST':
+        post_body = json.loads(request.body)
+        user = Profile.objects.filter(user__username=post_body['username'])
+        if (user.count() == 0):
+            password = post_body['password']
+            username = post_body['username']
+            sex = int(post_body['sex'])
+            avator = str(post_body['avator'])
+            phone = post_body['phone']
+            user = User.objects.create_user(username=username, password=password)
+            img = open(avator,"rb")
+            profile = Profile.objects.create(user=user, sex=sex, phone=phone)
+            profile.avator.save('boy.jpg', File(img), save=True)
+            return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
+        else:
+            return HttpResponse(json.dumps("The username has been used"), status=400, content_type="application/json")
+
 
 # for models test by hand
 def test(request):

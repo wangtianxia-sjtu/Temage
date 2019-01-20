@@ -14,7 +14,7 @@ class TokenMiddleware(object):
  
     def process_view(self, request, view_func, view_args, view_kwargs):
         path = request.path
-        if (path == '/login/submit/'):
+        if (path == '/login/submit/' or path == '/register'):
             return None
         token = request.META.get("HTTP_AUTHORIZATION")
         if token:

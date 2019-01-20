@@ -53,19 +53,33 @@ class ModelTest(TestCase):
         profile2.avator.save('boy.jpg', File(avator2), save=True)
         profile1.theme.add(theme1)
         profile1.theme.add(theme2)
+        profile1.theme.add(theme3)
         product1 = Product.objects.create(title="product_1", html="<p>good day</p>", creator=profile1,style=style1, score=0.1, id=11)
         product2 = Product.objects.create(title="product_2", html="<p>bad day</p>", creator=profile1,style=style2, score=0.9, id=12)
         product3 = Product.objects.create(title="product_3", html="<p>cold day</p>", creator=profile1,style=style4, score=0.8, id=13)
         product4 = Product.objects.create(title="product_4", html="<p>hot day</p>", creator=profile1,style=style5, score=0.7, id=14)
+        product5 = Product.objects.create(title="product_5", html="<p>hot day</p>", creator=profile1,style=style6, score=0.7, id=15)
+        product6 = Product.objects.create(title="product_6", html="<p>hot day</p>", creator=profile1,style=style7, score=0.7, id=16)
+        product7 = Product.objects.create(title="product_7", html="<p>hot day</p>", creator=profile1,style=style8, score=0.7, id=17)
         product1.imagesrc.save('good.jpg', File(img1), save=True)
         product2.imagesrc.save('bad.jpg', File(img2), save=True)
         product3.imagesrc.save('cold.jpg', File(img3), save=True)
         product4.imagesrc.save('hot.jpg', File(img4), save=True)
+        product5.imagesrc.save('hot.jpg', File(img4), save=True)
+        product6.imagesrc.save('hot.jpg', File(img4), save=True)
+        product7.imagesrc.save('hot.jpg', File(img4), save=True)
         product1.theme.add(theme1)
         product1.theme.add(theme2)
         product2.theme.add(theme2)
         card1 = Card.objects.create(creator=profile1, product=product1, url="http://temage/goodday", title="positive", prompt="A positive people said...")
-        card2 = Card.objects.create(creator=profile1, product=product2, url="http://temage/goodday", title="negative", prompt="A negative people said...")
+        card2 = Card.objects.create(creator=profile1, product=product2, url="http://temage/badday", title="negative", prompt="A negative people said...")
+        card3 = Card.objects.create(creator=profile1, product=product3, url="http://temage/coldday", title="cold", prompt="A cold people said...")
+        card4 = Card.objects.create(creator=profile1, product=product4, url="http://temage/hotday", title="hot", prompt="A hot people said...")
+        card5 = Card.objects.create(creator=profile1, product=product5, url="http://temage/hotday", title="hot", prompt="A hot people said...")
+        card6 = Card.objects.create(creator=profile1, product=product6, url="http://temage/hotday", title="hot", prompt="A hot people said...")
+        card7 = Card.objects.create(creator=profile1, product=product7, url="http://temage/hotday", title="hot", prompt="A hot people said...")
+        collection1 = Collection.objects.create(name = "quote", user=profile1)
+        collection1 = Collection.objects.create(name = "quote", user=profile1)
         collection1 = Collection.objects.create(name = "quote", user=profile1)
         collection1.cards.add(card1)
         collection1.cards.add(card2)
@@ -92,7 +106,6 @@ class ModelTest(TestCase):
 
     def testSuperuser(self):
         super_user = User.objects.filter(is_superuser=True)
-        # print(super_user)
         self.assertEqual(len(super_user),1)
 
 
@@ -115,10 +128,9 @@ class ModelTest(TestCase):
         user = Profile.objects.get(user__username='qxy')
         themelist_of_user = user.theme.all().values('name')
         list1 = list(themelist_of_user)
-        productlist = user.products.all()
-        themelist_of_product = productlist[0].theme.all().values('name')
+        themelist_of_product = Product.objects.get(id=11).theme.all().values('name')
         list2 = list(themelist_of_product)
-        self.assertEqual(list1[1]['name'], list2[0]['name'])
+        self.assertEqual(list1[0]['name'], list2[0]['name'])
 
 
 #  用例编号: 102
@@ -137,7 +149,6 @@ class ModelTest(TestCase):
 #  测试经验总结: 无
     def testLogin(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
-        # print(response.content)
         self.assertEqual(response.status_code, 200)
 
 #  用例编号: 103
@@ -228,7 +239,116 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.get('/api/collection', HTTP_AUTHORIZATION=token)
-        print(responseAPI.content)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList[0]), 1)
         self.assertEqual(len(responseList[1]), 2)
+
+#  用例编号: 106
+#  测试单元描述: 测试api/recent接口
+#  用例目的: 测试给前端/api/recent返回的数据是否符合规范
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 用户需要先登录才能获取这些信息
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 登录后response中带有身份象征的token，token解码后id为2
+# 		  实际输出: id为2
+# 		  备注: 根据setup的改动，id可能有所变动
+#     步骤2
+#         输入: 带有步骤1中token的request
+# 		  期望输出: 七张card
+# 		  实际输出: 七张card
+# 		  备注:
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+
+    def testApiRecent(self):
+        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        responseAPI = self.client.get('/api/recent', HTTP_AUTHORIZATION=token)
+        responseList = json.loads(responseAPI.content)
+        self.assertEqual(len(responseList), 7)
+
+
+#  用例编号: 107
+#  测试单元描述: 测试register接口
+#  用例目的: 测试用户注册功能
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 无
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 注册成功状态码“200”
+# 		  实际输出: “200”
+# 		  备注: 
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+
+    def testRegister(self):
+        response = self.client.post('/register',  {'username': 'tx', 'password': '123', 'sex': '1', 'avator': '../test_file/img/girl.jpg', 'phone': '+8610086'}, content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+
+#  用例编号: 108
+#  测试单元描述: 测试/api/gallery接口
+#  用例目的: 测试/api/gallery返回的数据是否符合规范
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 需登陆后操作
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 登录后response中带有身份象征的token，token解码后id为2
+# 		  实际输出: id为2
+# 		  备注: 根据setup的改动，id可能有所变动
+#     步骤2
+#         输入: 带有步骤1中token的request
+# 		  期望输出: 返回相应gallery数据
+# 		  实际输出：返回了相应的gallery数据
+# 		  备注:
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+
+    def testApiGallery(self):
+        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        responseAPI = self.client.get('/api/gallery', HTTP_AUTHORIZATION=token)
+        responseList = json.loads(responseAPI.content)
+        self.assertEqual(len(responseList), 7)
+
+#  用例编号: 109
+#  测试单元描述: 测试/api/gallery/more_cards接口
+#  用例目的: 测试/api/gallery/more_cards返回的数据是否符合规范
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 需登陆后操作
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 登录后response中带有身份象征的token，token解码后id为2
+# 		  实际输出: id为2
+# 		  备注: 根据setup的改动，id可能有所变动
+#     步骤2
+#         输入: 带有步骤1中token的request
+# 		  期望输出: 随机返回4条gallery数据
+# 		  实际输出: 随机返回4条gallery数据
+# 		  备注:
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+
+    def testApiGalleryMoreCard(self):
+        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        responseAPI = self.client.get('/api/gallery/more_cards', HTTP_AUTHORIZATION=token)
+        responseList = json.loads(responseAPI.content)
+        self.assertEqual(len(responseList), 4)
