@@ -13,10 +13,13 @@ class TokenMiddleware(object):
         return response
  
     def process_view(self, request, view_func, view_args, view_kwargs):
+        path = request.path
+        if (path == '/login/submit/'):
+            return None
         token = request.META.get("HTTP_AUTHORIZATION")
         if token:
             payload = jwt.decode(token, "Temage")
-            print(payload)
+            # print(payload)
             user = User.objects.get(id=payload['id'])
             if user.username != payload['name']:
                 return JsonResponse({"msg":"Invalid Token", "code": 400})
