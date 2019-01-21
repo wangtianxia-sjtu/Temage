@@ -48,7 +48,7 @@ class Product(CommonThemes):
 class Card(models.Model):
     id = models.AutoField(primary_key=True)
     creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='cards')
-    url = models.CharField(max_length=255)
+    # url = models.CharField(max_length=255)
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='cards')
     title = models.CharField(max_length=50)
     prompt = models.TextField()

@@ -71,13 +71,13 @@ class ModelTest(TestCase):
         product1.theme.add(theme1)
         product1.theme.add(theme2)
         product2.theme.add(theme2)
-        card1 = Card.objects.create(creator=profile1, product=product1, url="http://temage/goodday", title="positive", prompt="A positive people said...")
-        card2 = Card.objects.create(creator=profile1, product=product2, url="http://temage/badday", title="negative", prompt="A negative people said...")
-        card3 = Card.objects.create(creator=profile1, product=product3, url="http://temage/coldday", title="cold", prompt="A cold people said...")
-        card4 = Card.objects.create(creator=profile1, product=product4, url="http://temage/hotday", title="hot", prompt="A hot people said...")
-        card5 = Card.objects.create(creator=profile1, product=product5, url="http://temage/hotday", title="hot", prompt="A hot people said...")
-        card6 = Card.objects.create(creator=profile1, product=product6, url="http://temage/hotday", title="hot", prompt="A hot people said...")
-        card7 = Card.objects.create(creator=profile1, product=product7, url="http://temage/hotday", title="hot", prompt="A hot people said...")
+        card1 = Card.objects.create(creator=profile1, product=product1, title="positive", prompt="A positive people said...", id=1)
+        card2 = Card.objects.create(creator=profile1, product=product2, title="negative", prompt="A negative people said...")
+        card3 = Card.objects.create(creator=profile1, product=product3, title="cold", prompt="A cold people said...")
+        card4 = Card.objects.create(creator=profile1, product=product4, title="hot", prompt="A hot people said...")
+        card5 = Card.objects.create(creator=profile1, product=product5, title="hot", prompt="A hot people said...")
+        card6 = Card.objects.create(creator=profile1, product=product6, title="hot", prompt="A hot people said...")
+        card7 = Card.objects.create(creator=profile1, product=product7, title="hot", prompt="A hot people said...")
         collection1 = Collection.objects.create(name = "quote", user=profile1)
         collection1 = Collection.objects.create(name = "quote", user=profile1)
         collection1 = Collection.objects.create(name = "quote", user=profile1)
@@ -177,7 +177,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 3)
 
@@ -271,7 +271,7 @@ class ModelTest(TestCase):
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.get('/api/recent', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
-        self.assertEqual(len(responseList), 7)
+        self.assertEqual(len(responseList), 4)
 
 
 #  用例编号: 107
@@ -352,3 +352,33 @@ class ModelTest(TestCase):
         responseAPI = self.client.get('/api/gallery/more_cards', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 4)
+
+#  用例编号: 110
+#  测试单元描述: 测试/api/text接口
+#  用例目的: 测试/api/text返回的数据是否符合规范
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 需登陆后操作
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 登录后response中带有身份象征的token，token解码后id为2
+# 		  实际输出: id为2
+# 		  备注: 根据setup的改动，id可能有所变动
+#     步骤2
+#         输入: 带有步骤1中token的request
+# 		  期望输出: 返回所请求的card的信息
+# 		  实际输出: 返回所请求的card的信息
+# 		  备注:
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+
+    def testApiText(self):
+        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        responseAPI = self.client.post('/api/text', {'id' : '1'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseList = json.loads(responseAPI.content)
+        self.assertEqual(responseList['id'], 1)
