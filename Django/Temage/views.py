@@ -28,6 +28,13 @@ def get_user(request, num):
     result = json.dumps(json_data[0]).replace('\"',"\'")
     return HttpResponse(json.dumps(result), content_type="application/json")
 
+######################################################
+#
+# Interfaces for get data from database and send theme to front-end
+# 
+######################################################
+
+
 def get_homepage_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
@@ -69,7 +76,7 @@ def get_homepage_data(request):
     return HttpResponse(json.dumps(relist), content_type="application/json")
 
 def get_work_data(request, workID):
-    # guess data
+    # guess data here
     work = Product.objects.get(id=workID).html
     allstyle = Style.objects.all().values('name')
     relist = [list(allstyle), work]
@@ -156,7 +163,30 @@ def get_rescent_data(request):
         picinfo['id'] = pic.product.id
         reclist.append(picinfo)
     return HttpResponse(json.dumps(reclist), content_type="application/json")
-    
+
+def get_text(request):
+    if (request.method == 'POST'):
+        post_body = json.loads(request.body)
+        card_id = post_body['id']
+        card = Card.objects.get(id=card_id)
+        cardinfo = {}
+        userinfo = {}
+        userinfo['username'] = card.creator.user.username
+        userinfo['id'] = card.creator.user.id
+        userinfo['avator'] = str(card.creator.avator)
+        cardinfo['id'] = card.id
+        cardinfo['text'] = card.product.html
+        cardinfo['creator'] = userinfo
+        cardinfo['title'] = card.product.title
+        cardinfo['style'] = card.product.style.name
+        return HttpResponse(json.dumps(cardinfo), content_type="application/json")
+
+#########################################################
+#
+# Interfaces for register and login, and also identity authenticate
+# 
+#########################################################
+
 def login_submit(request):
     if (request.method == 'POST'):
         post_body = json.loads(request.body)
@@ -210,23 +240,12 @@ def register(request):
         else:
             return HttpResponse(json.dumps("The username has been used"), status=400, content_type="application/json")
 
-def get_text(request):
-    if (request.method == 'POST'):
-        post_body = json.loads(request.body)
-        card_id = post_body['id']
-        card = Card.objects.get(id=card_id)
-        cardinfo = {}
-        userinfo = {}
-        userinfo['username'] = card.creator.user.username
-        userinfo['id'] = card.creator.user.id
-        userinfo['avator'] = str(card.creator.avator)
-        cardinfo['id'] = card.id
-        cardinfo['text'] = card.product.html
-        cardinfo['creator'] = userinfo
-        cardinfo['title'] = card.product.title
-        cardinfo['style'] = card.product.style.name
-        return HttpResponse(json.dumps(cardinfo), content_type="application/json")
 
+##########################
+#
+# Interface for workflow 
+# 
+##########################
 
 
 # for models test by hand
