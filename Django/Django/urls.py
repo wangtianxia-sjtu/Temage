@@ -19,30 +19,23 @@ from Temage import views
 from django.conf.urls import url
 
 api_patterns = [
-    url(r'^$', views.get_homepage_data),
-    url(r'^work/(.[0-9]+)$', views.get_work_data),
-    url(r'^gallery$', views.get_gallery_data),
-    url(r'^gallery/more_cards', views.get_gallery_more_cards),
-    url(r'^collection$', views.get_collection_data),
-    url(r'^recent$', views.get_rescent_data),
-    url(r'^text$', views.get_text),
+    path('', views.get_homepage_data),
+    path('work/<int:work_id>', views.get_work_data),
+    path('gallery', views.get_gallery_data),
+    path('gallery/more_cards', views.get_gallery_more_cards),
+    path('collection', views.get_collection_data),
+    path('recent', views.get_rescent_data),
+    path('text', views.get_text),
 ]
 
 
 urlpatterns = [
-    url(r'user/(.+)/', views.get_user),
-    url(r'^admin/', admin.site.urls),
-    url('api/', include(api_patterns)),
-    # url(r'^api/work/(.[0-9]+)$', views.get_work_data),
-    # url(r'^api/gallery$', views.get_gallery_data),
-    # url(r'^api/gallery/more_cards', views.get_gallery_more_cards),
-    # url(r'^api/collection$', views.get_collection_data),
-    # url(r'^api/recent$', views.get_rescent_data),
-    # url(r'^api/text$', views.get_text),
-    url(r'^register', views.register),
-    url(r'^login/submit', views.login_submit),
-    url(r'^authenticate', views.JWTauthenticate),
+    path('admin/', admin.site.urls),
+    path('api/', include(api_patterns)),
+    path('register', views.register),
+    path('login/submit/', views.login_submit),
+    path('authenticate', views.JWTauthenticate),
 
     # for quick model test
-    url(r'^test', views.test),
+    path('test/', views.test),
 ]

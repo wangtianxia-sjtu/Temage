@@ -34,6 +34,7 @@ class Product(CommonThemes):
     html = models.TextField(blank=True)
     # theme = models.ManyToManyField(Theme)
     #path = models.CharField(max_length=255)
+    vector = models.TextField(blank=True)
     score = models.FloatField(null=True)
     time = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='products')
