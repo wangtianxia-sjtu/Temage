@@ -5,14 +5,14 @@
 
 1. make sure you have installed some dependencies
 
-   ```shell
+   ``` bash
    cd /your/local/path/Temage
    pip install -r requirements.txt
    ```
 
 2. modify Django configs and tornado configs
 
-   ```shell
+   ``` bash
    cd /your/local/path/Temage/Django/Django
    vim settings.py
    # modify configs
@@ -25,7 +25,7 @@
 
 3. migrate models into database(we have diy commands to simplify the process)
 
-   ```shell
+   ``` bash
    cd /your/local/path/Temage/Django
    python manage.py cleanmigration # clean migration files
    python manage.py droptables # clean the db
@@ -35,7 +35,7 @@
 
 4. start Django server and Tornado server
 
-   ```shell
+   ``` bash
    cd /your/local/path/Temage/Django
    python manage.py runserver 0.0.0.0:8080# start Django server
    cd /your/local/path/Temage/tornado
@@ -67,5 +67,16 @@ almost the same as the develop, but pay attention to some settings
        "debug": False
    }
    ```
-
-if there has anything wrong, please contact with administrator.
+## CI/CD Script
+``` bash
+# start from pure python environment
+cd your/local/path/Temage/Django
+pip install django
+pip install pymysql
+pip install django-cors-headers
+pip install django_polymorphic
+pip install pyjwt
+pip install Pillow
+python manage.py cleanmigration && python manage.py droptables && python manage.py makemigrations Temage && python manage.py migrate Temage && python manage.py test
+```
+if there is anything wrong, please contact administrator.
