@@ -131,12 +131,12 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 
+CORS_ALLOW_ALL = True
 
-
-CORS_ORIGIN_WHITELIST = (
-    'localhost:8081',
-    '192.168.1.226:8082'
-)
+# CORS_ORIGIN_WHITELIST = (
+#     'localhost:8081',
+#     '192.168.1.226:8082'
+# )
 CORS_ALLOW_CREDENTIALS = True
 
 

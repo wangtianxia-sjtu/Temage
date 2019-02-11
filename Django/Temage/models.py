@@ -13,8 +13,8 @@ class Theme(models.Model):
 
 class Profile(CommonThemes):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='extension')
-    sex = models.BooleanField(default=0)
-    phone = models.CharField(max_length=15, null=False)
+    # sex = models.BooleanField(default=0)
+    # phone = models.CharField(max_length=15, null=False)
     avator = models.ImageField(upload_to='img/avator')
     # interest = models.ManyToManyField(Theme)
     def __str__(self):
@@ -41,6 +41,7 @@ class Product(CommonThemes):
     style = models.ForeignKey(Style, on_delete=models.DO_NOTHING, related_name='products')
     createTime = models.DateTimeField(auto_now_add=True)
     updateTime = models.DateTimeField(auto_now=True)
+    isfinished = models.BooleanField(default=0)
     def __str__(self):
         return self.id
     class Meta:

@@ -233,13 +233,15 @@ def register(request):
         if user.count() == 0:
             password = post_body['password']
             username = post_body['username']
-            sex = int(post_body['sex'])
-            avator = str(post_body['avator'])
-            phone = post_body['phone']
+            interests = post_body['interest']
             user = User.objects.create_user(username=username, password=password)
-            img = open(avator, "rb")
-            profile = Profile.objects.create(user=user, sex=sex, phone=phone)
-            profile.avator.save('boy.jpg', File(img), save=True)
+            profile = Profile.objects.create(user=user)
+            for interest in interests:
+                theme = Theme.objects.get(name=interest)
+                profile.theme.add(theme)
+
+            avator = open("../media/img/avator/boy.jpg", "rb")
+            profile.avator.save('boy.jpg', File(avator), save=True)
             return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
         else:
             return HttpResponse(json.dumps("The username has been used"),
@@ -250,6 +252,31 @@ def register(request):
 ##########################
 # Interface for workflow
 ##########################
+def pic_post(request):
+    """
+    Get pictures from users, and send them to the models.
+    """
+    
+    return HttpResponse()
+
+def text_post(request):
+    """
+    Get text content from users, and send it with the pictures
+    """
+
+    return HttpResponse()
+
+def ret_html(request, style):
+
+    return HttpResponse()
+
+def store_passage(request):
+
+    return HttpResponse()
+
+def finished_work(request):
+
+    return HttpResponse()
 
 # for models test by hand
 def test(request):
