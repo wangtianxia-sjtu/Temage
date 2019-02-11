@@ -67,5 +67,8 @@ tornado/model/demo/elmo/zhs.model/*
 /Django/Temage/migrations
 
 # test resources
-test_file/
+# test_file/ (commented out for CI/CD usage)
 media/
+
+# vscode files
+.vscode/
