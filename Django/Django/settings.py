@@ -87,7 +87,9 @@ DATABASES = {
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0;",
+            'charset': 'utf8mb4',
         },
+        'TEST_CHARSET': 'utf-8',
     }
 }
 

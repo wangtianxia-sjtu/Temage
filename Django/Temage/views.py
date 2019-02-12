@@ -66,7 +66,15 @@ def get_homepage_data(request):
         card_info['promt'] = card.prompt
         card_info['id'] = card.product.id
         gallist.append(card_info)
-    relist = [reclist, collist, list(gallist)]
+    userInfo = {}
+    userInfo['username'] = user.user.username
+    userInfo['id'] = user.user.id
+    userInfo['avator'] = str(user.avator)
+    relist = {}
+    relist['recent_pics'] = reclist
+    relist['collect_pics'] = collist[1]
+    relist['gallery_pics'] = gallist
+    relist['user_info'] = userInfo
     return HttpResponse(json.dumps(relist), content_type="application/json")
 
 def get_work_data(request, work_id):
@@ -82,7 +90,7 @@ def get_work_data(request, work_id):
     allstyle = Style.objects.all().values('name')
     work_data = {}
     work_data['guess_style'] = [{'name' : 'sport','possibility': '80%'},{'name' : 'art','possibility' : '45%'},{'name' : 'history','possibility': '25%'}]
-    work_data['allstyle'] = allstyle
+    work_data['style'] = ['style_1','style_2','style_4','style_5','style_6','style_7','style_8','style_9','style_a','style_b','style_c','style_d','style_e','style_f','style_g','style_h','style_i','style_j','style_k','style_l']
     work_data['temage'] = "<html><head> </head> <body> <h1>Hello, Temage!</h1> </body> </html>"
     return HttpResponse(json.dumps(work_data), content_type="application/json")
 
@@ -99,7 +107,7 @@ def get_gallery_data(request):
     identity = payload['id']
     cards = Card.objects.all()
     cardsInfo = []
-    if cards.count() >= 7:
+    if cards.count() > 7:
         cards = cards[:7]
 
     for card in cards:
@@ -108,10 +116,13 @@ def get_gallery_data(request):
         userInfo['username'] = card.creator.user.username
         userInfo['id'] = card.creator.user.id
         userInfo['avator'] = str(card.creator.avator)
-        cardinfo['prompt'] = card.prompt
         cardinfo['id'] = card.product.id
         cardinfo['creator'] = userInfo
         cardinfo['title'] = card.title
+        cardinfo['imagesrc'] = str(card.product.imagesrc)
+        cardinfo['head'] = card.head
+        cardinfo['maintext'] = card.prompt
+        cardinfo['foottext'] = card.foottext
         cardsInfo.append(cardinfo)
     return HttpResponse(json.dumps(cardsInfo), content_type="application/json")
 
@@ -127,10 +138,13 @@ def get_gallery_more_cards(request):
         userInfo['username'] = card.creator.user.username
         userInfo['id'] = card.creator.user.id
         userInfo['avator'] = str(card.creator.avator)
-        cardinfo['prompt'] = card.prompt
         cardinfo['id'] = card.product.id
         cardinfo['creator'] = userInfo
+        cardinfo['imagesrc'] = str(card.product.imagesrc)
         cardinfo['title'] = card.title
+        cardinfo['head'] = card.head
+        cardinfo['maintext'] = card.prompt
+        cardinfo['foottext'] = card.foottext
         cardsInfo.append(cardinfo)
     return HttpResponse(json.dumps(cardsInfo), content_type="application/json")
 
@@ -157,7 +171,7 @@ def get_collection_data(request):
             cardinfo['title'] = card.title
             cardsInfo.append(cardinfo)
         collections.append(cardsInfo)
-    return HttpResponse(json.dumps(collections), content_type="application/json")
+    return HttpResponse(json.dumps(collections[1]), content_type="application/json")
 
 def get_rescent_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
@@ -176,20 +190,23 @@ def get_rescent_data(request):
 
 def get_text(request):
     if request.method == 'POST':
-        post_body = json.loads(request.body)
-        card_id = post_body['id']
+        card_id = json.loads(request.body)['id']
         card = Card.objects.get(id=card_id)
-        cardinfo = {}
-        userinfo = {}
-        userinfo['username'] = card.creator.user.username
-        userinfo['id'] = card.creator.user.id
-        userinfo['avator'] = str(card.creator.avator)
-        cardinfo['id'] = card.id
-        cardinfo['text'] = card.product.html
-        cardinfo['creator'] = userinfo
-        cardinfo['title'] = card.product.title
-        cardinfo['style'] = card.product.style.name
-        return HttpResponse(json.dumps(cardinfo), content_type="application/json")
+        content = {}
+        userInfo = {}
+        userInfo['username'] = card.creator.user.username
+        userInfo['id'] = card.creator.user.id
+        userInfo['avator'] = str(card.creator.avator)
+        content['id'] = card_id
+        content['text'] = card.product.html
+        content['creator'] = userInfo
+        content['title'] = card.title
+        themes = card.product.theme.all()
+        themelist = []
+        for theme in themes:
+            themelist.append(theme.name)
+        content['style'] = themelist
+        return HttpResponse(json.dumps(content), content_type="application/json")
 
 ####################################################################
 # Interfaces for register and login, and also identity authenticate

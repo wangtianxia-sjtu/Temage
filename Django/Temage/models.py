@@ -54,6 +54,8 @@ class Card(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='cards')
     title = models.CharField(max_length=50)
     prompt = models.TextField()
+    head = models.CharField(max_length=255)
+    foottext = models.CharField(max_length = 255)
     createTime = models.DateTimeField(auto_now_add=True)
     updateTime = models.DateTimeField(auto_now=True)
     def __str__(self):

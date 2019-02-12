@@ -79,10 +79,10 @@ class Command(BaseCommand):
             card6 = Card.objects.create(creator=profile1, product=product6, title="hot", prompt="A hot people said...")
             card7 = Card.objects.create(creator=profile1, product=product7, title="hot", prompt="A hot people said...")
             collection1 = Collection.objects.create(name = "quote", user=profile1)
-            collection1 = Collection.objects.create(name = "quote", user=profile1)
-            collection1 = Collection.objects.create(name = "quote", user=profile1)
             collection1.cards.add(card1)
             collection1.cards.add(card2)
+            collection1.cards.add(card3)
+            collection1.cards.add(card4)
             collection2 = Collection.objects.create(name="requote", user=profile1)
             collection2.cards.add(card1)
         except:
