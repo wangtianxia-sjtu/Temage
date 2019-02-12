@@ -80,8 +80,11 @@ def get_work_data(request, work_id):
     # guess data here
     work = Product.objects.get(id=work_id).html
     allstyle = Style.objects.all().values('name')
-    relist = [list(allstyle), work]
-    return HttpResponse(json.dumps(relist), content_type="application/json")
+    work_data = {}
+    work_data['guess_style'] = [{'name' : 'sport','possibility': '80%'},{'name' : 'art','possibility' : '45%'},{'name' : 'history','possibility': '25%'}]
+    work_data['allstyle'] = allstyle
+    work_data['temage'] = "<html><head> </head> <body> <h1>Hello, Temage!</h1> </body> </html>"
+    return HttpResponse(json.dumps(work_data), content_type="application/json")
 
 def get_gallery_data(request):
     """
