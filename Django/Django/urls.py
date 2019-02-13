@@ -26,6 +26,14 @@ api_patterns = [
     path('collection', views.get_collection_data),
     path('recent', views.get_rescent_data),
     path('text', views.get_text),
+    path('pic_post', views.pic_post),
+    path('text_post', views.text_post),
+    path('ret_html', views.ret_html),
+    path('store_passage', views.store_passage),
+    path('finished_work', views.finished_work),
+    path('download', views.download),
+    path('confirm_store', views.confirm_store),
+    path('destroy', views.destroy),
 ]
 
 

@@ -47,6 +47,7 @@ class Product(CommonThemes):
     class Meta:
         ordering = ['-updateTime']
 
+
 class Card(models.Model):
     id = models.AutoField(primary_key=True)
     creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='cards')
