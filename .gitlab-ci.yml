@@ -2,24 +2,22 @@
 # see https://docs.gitlab.com/ce/ci/yaml/README.html for all available options
 
 # you can delete this line if you're not using Docker
-image: mysql:5.7
-services:
-  - mysql:5.7
+image: wangtianxia/temage-backend-test:v1
+  
+variables:
+  # MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+  MYSQL_ROOT_PASSWORD: mysql_strong_password
 
 before_script:
   - echo "Before script section"
   - echo "For example you might run an update here or install a build dependency"
   - echo "Or perhaps you might print out some debugging details"
-  - apt-get update -qy
-  - apt-get install -y python3-dev python3-pip
-  - python3 -V
-  - mysqld --initialize-insecure --user=mysql
-  - pip3 install django
-  - pip3 install pymysql
-  - pip3 install django-cors-headers
-  - pip3 install django_polymorphic
-  - pip3 install pyjwt
-  - pip3 install Pillow
+  - mysql --version
+  - echo $PATH
+  - ls /root
+  - mysql -u root -p"$MYSQL_ROOT_PASSWORD" -h 127.0.0.1
+  - show databases;
+  - exit
   
 after_script:
   - echo "After script section"
@@ -36,7 +34,7 @@ test1:
     - cd Django
     - ls -ahl
     - pwd
-    - python3 manage.py cleanmigration && python3 manage.py droptables && python3 manage.py makemigrations Temage && python3 manage.py migrate Temage && python3 manage.py test
+    - /root/anaconda3/bin/python manage.py test
    
 deploy1:
   stage: deploy
