@@ -34,7 +34,11 @@ test1:
     - cd Django
     - ls -ahl
     - pwd
-    - /root/anaconda3/bin/python manage.py test
+    - /root/anaconda3/bin/python manage.py cleanmigration --settings Django.ci
+    - /root/anaconda3/bin/python manage.py droptablesCI --settings Django.ci
+    - /root/anaconda3/bin/python manage.py makemigrations Temage --settings Django.ci
+    - /root/anaconda3/bin/python manage.py migrate Temage --settings Django.ci
+    - /root/anaconda3/bin/python manage.py test --settings Django.ci
    
 deploy1:
   stage: deploy
