@@ -3,10 +3,12 @@
 
 # you can delete this line if you're not using Docker
 image: wangtianxia/temage-backend-test:v1
+
+services:
+  - mysql:5.7
   
 variables:
-  # MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-  MYSQL_ROOT_PASSWORD: mysql_strong_password
+  MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
 
 before_script:
   - echo "Before script section"
@@ -15,9 +17,7 @@ before_script:
   - mysql --version
   - echo $PATH
   - ls /root
-  - mysql -u root -p"$MYSQL_ROOT_PASSWORD" -h 127.0.0.1
-  - show databases;
-  - exit
+  - echo "SELECT 'OK';" | mysql -u root -h mysql
   
 after_script:
   - echo "After script section"
