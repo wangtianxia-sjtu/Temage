@@ -17,7 +17,8 @@ before_script:
   - mysql --version
   - echo $PATH
   - ls /root
-  - echo "SELECT 'OK';" | mysql -u root -h mysql
+  - echo "SHOW VARIABLES LIKE 'character_set_%'" | mysql -u root -h mysql
+  - echo "SET NAMES 'utf8'" | mysql -u root -h mysql
   
 after_script:
   - echo "After script section"
@@ -34,6 +35,7 @@ test1:
     - cd Django
     - ls -ahl
     - pwd
+    - echo "SET NAMES 'utf8'" | mysql -u root -h mysql
     - /root/anaconda3/bin/python manage.py cleanmigration --settings Django.ci
     - /root/anaconda3/bin/python manage.py droptablesCI --settings Django.ci
     - /root/anaconda3/bin/python manage.py makemigrations Temage --settings Django.ci
