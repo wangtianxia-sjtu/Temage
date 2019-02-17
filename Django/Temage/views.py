@@ -314,7 +314,7 @@ def finished_work(request):
     if request.method == 'POST':
         post_body = json.loads(request.body)
         work_id = post_body['workID']
-        url = "/api/work/" + work_id
+        url = "/api/work/" + str(work_id) + "/"
         content = {}
         content['url'] = url
         return HttpResponse(json.dumps(content), content_type = "application/json")
@@ -325,7 +325,7 @@ def download(request):
         work_id = post_body['workID']
         # 生成长图
         img_name = "boy.jpg"
-        url = "/media/img/pimg" + img_name
+        url = "/media/img/pimg/" + str(img_name)
         content = {}
         content['url'] = url
         return HttpResponse(json.dumps(content), content_type = "application/json")
