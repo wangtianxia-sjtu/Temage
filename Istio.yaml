@@ -1,0 +1,35 @@
+metadata:
+  name: temage
+spec:
+  host: temage_host
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 20
+      http:
+        http1MaxPendingRequests: 20
+        maxRequestsPerConnection: 20
+    outlierDetection:
+      consecutiveErrors: 3
+      interval: 1s
+      baseEjectionTime: 3m
+      maxEjectionPercent: 100
+      
+      
+      
+      
+      
+      
+apiVersion: temage_path/v1
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v2
+    timeout: 2s

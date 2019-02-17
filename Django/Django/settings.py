@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -149,3 +150,12 @@ CORS_ALLOW_CREDENTIALS = True
 PRE_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 MEDIA_ROOT = os.path.join(PRE_ROOT,'media')
 MEDIA_URL = '../media/'
+
+#sentry settings
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://01a7e750f90f44ec9a0fd2c4d608c4c9@sentry.io/1395787",
+    integrations=[DjangoIntegration()]
+)
