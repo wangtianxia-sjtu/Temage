@@ -330,16 +330,19 @@ def store_passage(request):
             style = Theme.objects.get(name=style_name)
             product.theme.add(style)
         content = {}
-        content['id'] = product.id
+        content['ID'] = product.id
         return HttpResponse(json.dumps(content), status=200, content_type="application/json")
 
 def finished_work(request):
     if request.method == 'POST':
         post_body = json.loads(request.body)
         work_id = post_body['workID']
+        work = Product.objects.get(id=work_id)
+        width = work.width
         url = "/api/work/" + str(work_id) + "/"
         content = {}
         content['url'] = url
+        content['width'] = width
         return HttpResponse(json.dumps(content), content_type = "application/json")
 
 def download(request):

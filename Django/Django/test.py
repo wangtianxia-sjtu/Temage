@@ -412,6 +412,7 @@ class ModelTest(TestCase):
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/finished_work/', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
+        print("testFinished")
         print(responseList)
 
     def testDownload(self):
