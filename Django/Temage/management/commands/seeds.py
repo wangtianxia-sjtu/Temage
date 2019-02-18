@@ -8,6 +8,8 @@ from Temage.models import Collection
 from Temage.models import Theme
 from django.core.files import File
 
+htmlmessi = '<p> Messi is Back! </p>'
+
 class Command(BaseCommand):
     # for simply init the db
     def handle(self, *args, **options):
@@ -62,7 +64,7 @@ class Command(BaseCommand):
             product5 = Product.objects.create(title="product_5", html="<p>hot day</p>", creator=profile1,style=style6, score=0.7, id=15, width=400)
             product6 = Product.objects.create(title="product_6", html="<p>hot day</p>", creator=profile1,style=style7, score=0.7, id=16, width=400)
             product7 = Product.objects.create(title="product_7", html="<p>hot day</p>", creator=profile1,style=style8, score=0.7, id=17, width=400)
-            product8 = Product.objects.create(title="Messi is Back!", html = htmlmecy, creator=profile1,style=style10, score=0.9, id=18, width=400)
+            product8 = Product.objects.create(title="Messi is Back!", html = htmlmessi, creator=profile1,style=style10, score=0.9, id=18, width=400)
             product1.imagesrc.save('good.jpg', File(img1), save=True)
             product2.imagesrc.save('bad.jpg', File(img2), save=True)
             product3.imagesrc.save('cold.jpg', File(img3), save=True)
@@ -84,7 +86,7 @@ class Command(BaseCommand):
             card6 = Card.objects.create(creator=profile1, product=product6, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
             card7 = Card.objects.create(creator=profile1, product=product7, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
             card8 = Card.objects.create(creator=profile1, product=product8, title = "Messi is Back!", prompt="Messi the Best", head="head content", foottext="foot content", id=10086)
-            collection1 = Collection.objects.create(name = "默认", user=profile1)
+            collection1 = Collection.objects.create(name = "quote", user=profile1, id=1)
             collection1.cards.add(card1)
             collection1.cards.add(card2)
             collection1.cards.add(card3)
