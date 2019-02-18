@@ -48,7 +48,7 @@ class ModelTest(TestCase):
         style18 = Style.objects.create(name="style_j")
         style19 = Style.objects.create(name="style_k")
         style20 = Style.objects.create(name="style_l")
-        theme1 = Theme.objects.create(name="Sport", id=1)
+        theme1 = Theme.objects.create(name="Sports", id=1)
         theme2 = Theme.objects.create(name="Art", id=2)
         theme3 = Theme.objects.create(name="Tech", id=3)
         theme4 = Theme.objects.create(name="Movie", id=4)                      
@@ -300,7 +300,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def testRegister(self):
-        response = self.client.post('/register',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Porn','Sport'],'desc': 'love and peace'}, content_type="application/json")
+        response = self.client.post('/register',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Porn','Sports'],'desc': 'love and peace'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
 #  用例编号: 108

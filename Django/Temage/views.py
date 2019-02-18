@@ -223,7 +223,7 @@ def collect(request):
             collection = user.collections.get(id=1)
             collection.cards.add(card)
             return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
-        ecept:
+        except:
             return HttpResponse(json.dumps("failed"), status=400, content_type="application/json")
 
 
@@ -291,21 +291,22 @@ def register(request):
 ##########################
 # Interface for workflow
 ##########################
-def pic_post(request):
+def pic_post(request): #需完善
     """
     Get pictures from users, and send them to the models.
     """
     
     return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
 
-def text_post(request):
+def text_post(request): #需完善
     """
     Get text content from users, and send it with the pictures
     """
 
     return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
 
-def ret_html(request, style):
+def ret_html(request): #需完善
+    # 会有styles需要接收
     content = {}
     content['html'] = result_html
     return HttpResponse(json.dumps(content), content_type="application/json")
