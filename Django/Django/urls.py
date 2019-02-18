@@ -19,13 +19,14 @@ from Temage import views
 from django.conf.urls import url
 
 api_patterns = [
-    path('', views.get_homepage_data),
-    path('work/<int:work_id>', views.get_work_data),
-    path('gallery', views.get_gallery_data),
-    path('gallery/more_cards', views.get_gallery_more_cards),
-    path('collection', views.get_collection_data),
-    path('recent', views.get_rescent_data),
-    path('text', views.get_text),
+    path('', views.homepage_data),
+    path('work/<int:work_id>', views.work_data),
+    path('gallery', views.gallery_data),
+    path('gallery/more_cards', views.gallery_more_cards),
+    path('collection', views.collection_data),
+    path('recent', views.rescent_data),
+    path('text', views.text),
+    path('collect', views.collect),
     path('pic_post', views.pic_post),
     path('text_post', views.text_post),
     path('ret_html', views.ret_html),

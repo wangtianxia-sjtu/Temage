@@ -13,7 +13,7 @@ import jwt
 import json
 
 # global variable of html string for test
-htmlmecy = '<p> Messi is Back! </p>'
+htmlmessi = '<p> Messi is Back! </p>'
 
 # Create your tests here.
 class ModelTest(TestCase):
@@ -61,14 +61,14 @@ class ModelTest(TestCase):
         profile1.theme.add(theme1)
         profile1.theme.add(theme2)
         profile1.theme.add(theme3)
-        product1 = Product.objects.create(title="product_1", html="<p>good day</p>", creator=profile1,style=style1, score=0.1, id=11)
-        product2 = Product.objects.create(title="product_2", html="<p>bad day</p>", creator=profile1,style=style2, score=0.9, id=12)
-        product3 = Product.objects.create(title="product_3", html="<p>cold day</p>", creator=profile1,style=style4, score=0.8, id=13)
-        product4 = Product.objects.create(title="product_4", html="<p>hot day</p>", creator=profile1,style=style5, score=0.7, id=14)
-        product5 = Product.objects.create(title="product_5", html="<p>hot day</p>", creator=profile1,style=style6, score=0.7, id=15)
-        product6 = Product.objects.create(title="product_6", html="<p>hot day</p>", creator=profile1,style=style7, score=0.7, id=16)
-        product7 = Product.objects.create(title="product_7", html="<p>hot day</p>", creator=profile1,style=style8, score=0.7, id=17)
-        product8 = Product.objects.create(title="Messi is Back!", html = htmlmecy, creator=profile1,style=style10, score=0.9, id = 18)
+        product1 = Product.objects.create(title="product_1", html="<p>good day</p>", creator=profile1,style=style1, score=0.1, id=11, width=400)
+        product2 = Product.objects.create(title="product_2", html="<p>bad day</p>", creator=profile1,style=style2, score=0.9, id=12, width=400)
+        product3 = Product.objects.create(title="product_3", html="<p>cold day</p>", creator=profile1,style=style4, score=0.8, id=13, width=400)
+        product4 = Product.objects.create(title="product_4", html="<p>hot day</p>", creator=profile1,style=style5, score=0.7, id=14, width=400)
+        product5 = Product.objects.create(title="product_5", html="<p>hot day</p>", creator=profile1,style=style6, score=0.7, id=15, width=400)
+        product6 = Product.objects.create(title="product_6", html="<p>hot day</p>", creator=profile1,style=style7, score=0.7, id=16, width=400)
+        product7 = Product.objects.create(title="product_7", html="<p>hot day</p>", creator=profile1,style=style8, score=0.7, id=17, width=400)
+        product8 = Product.objects.create(title="Messi is Back!", html = htmlmessi, creator=profile1,style=style10, score=0.9, id=18, width=400)
         product1.imagesrc.save('good.jpg', File(img1), save=True)
         product2.imagesrc.save('bad.jpg', File(img2), save=True)
         product3.imagesrc.save('cold.jpg', File(img3), save=True)
@@ -90,7 +90,7 @@ class ModelTest(TestCase):
         card6 = Card.objects.create(creator=profile1, product=product6, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
         card7 = Card.objects.create(creator=profile1, product=product7, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
         card8 = Card.objects.create(creator=profile1, product=product8, title = "Messi is Back!", prompt="Messi the Best", head="head content", foottext="foot content", id=10086)
-        collection1 = Collection.objects.create(name = "quote", user=profile1)
+        collection1 = Collection.objects.create(name = "quote", user=profile1, id=1)
         collection1.cards.add(card1)
         collection1.cards.add(card2)
         collection1.cards.add(card3)
@@ -400,7 +400,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/store_passage', {'style': 'style_1', 'html': htmlmecy, 'title': 'Messi is Back!'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/store_passage', {'styles': 'style_1', 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -441,5 +441,15 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/destroy', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseList = json.loads(responseAPI.content)
+        print(responseList)
+
+    def testCollect(self):
+        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        responseAPI = self.client.post('/api/collect', {'id': '10086'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)

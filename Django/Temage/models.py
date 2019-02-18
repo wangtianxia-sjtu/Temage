@@ -42,6 +42,7 @@ class Product(CommonThemes):
     createTime = models.DateTimeField(auto_now_add=True)
     updateTime = models.DateTimeField(auto_now=True)
     isfinished = models.BooleanField(default=0)
+    width = models.IntegerField()
     def __str__(self):
         return self.id
     class Meta:

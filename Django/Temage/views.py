@@ -26,7 +26,7 @@ result_html = '<!DOCTYPE html><html><head>    <meta http-equiv="Content-Type" co
 # Interfaces for get data from database and send theme to front-end
 ####################################################################
 
-def get_homepage_data(request):
+def homepage_data(request):
     """
     This is function that gets data for the homepage.
     Parameters:
@@ -79,7 +79,7 @@ def get_homepage_data(request):
     relist['user_info'] = userInfo
     return HttpResponse(json.dumps(relist), content_type="application/json")
 
-def get_work_data(request, work_id):
+def work_data(request, work_id):
     """
     This is function that gets data for the work space.
     Parameters:
@@ -96,7 +96,7 @@ def get_work_data(request, work_id):
     work_data['temage'] = "<html><head> </head> <body> <h1>Hello, Temage!</h1> </body> </html>"
     return HttpResponse(json.dumps(work_data), content_type="application/json")
 
-def get_gallery_data(request):
+def gallery_data(request):
     """
     This is function that gets data for the work space.
     Parameters:
@@ -128,7 +128,7 @@ def get_gallery_data(request):
         cardsInfo.append(cardinfo)
     return HttpResponse(json.dumps(cardsInfo), content_type="application/json")
 
-def get_gallery_more_cards(request):
+def gallery_more_cards(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -150,7 +150,7 @@ def get_gallery_more_cards(request):
         cardsInfo.append(cardinfo)
     return HttpResponse(json.dumps(cardsInfo), content_type="application/json")
 
-def get_collection_data(request):
+def collection_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -175,7 +175,7 @@ def get_collection_data(request):
         collections.append(cardsInfo)
     return HttpResponse(json.dumps(collections[1]), content_type="application/json")
 
-def get_rescent_data(request):
+def rescent_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -190,7 +190,7 @@ def get_rescent_data(request):
         reclist.append(picinfo)
     return HttpResponse(json.dumps(reclist), content_type="application/json")
 
-def get_text(request):
+def text(request):
     if request.method == 'POST':
         card_id = json.loads(request.body)['id']
         card = Card.objects.get(id=card_id)
@@ -209,6 +209,23 @@ def get_text(request):
             themelist.append(theme.name)
         content['style'] = themelist
         return HttpResponse(json.dumps(content), content_type="application/json")
+
+def collect(request):
+    if request.method == 'POST':
+        token = request.META.get("HTTP_AUTHORIZATION")
+        payload = jwt.decode(token, "Temage")
+        identity = payload['id']
+        post_body = json.loads(request.body)
+        card_id = post_body['id']
+        try:
+            user = Profile.objects.get(user__id=identity)
+            card = Card.objects.get(id=card_id)
+            collection = user.collections.get(id=1)
+            collection.cards.add(card)
+            return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
+        ecept:
+            return HttpResponse(json.dumps("failed"), status=400, content_type="application/json")
+
 
 ####################################################################
 # Interfaces for register and login, and also identity authenticate
@@ -300,12 +317,13 @@ def store_passage(request):
         identity = payload['id']
         post_body = json.loads(request.body)
         user = Profile.objects.get(user__id=identity)
-        style_name = post_body['style']
+        style_name = post_body['styles']
         style = Style.objects.get(name=style_name)
-        html = post_body['html']
+        html = post_body['res_html']
         title = post_body['title']
+        width = post_body['t_width']
         score = 0
-        product = Product.objects.create(title=title, html=html, creator=user,style=style, score=score)
+        product = Product.objects.create(title=title, html=html, creator=user,style=style, score=score, width=width)
         content = {}
         content['id'] = product.id
         return HttpResponse(json.dumps(content), status=200, content_type="application/json")
