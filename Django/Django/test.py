@@ -219,7 +219,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/work/11', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/work/11/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 3)
 
@@ -249,7 +249,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/collection', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/collection/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList[0]), 6)
 
@@ -279,7 +279,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/recent', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/recent/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 4)
 
@@ -300,7 +300,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def testRegister(self):
-        response = self.client.post('/register',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Porn','Sports'],'desc': 'love and peace'}, content_type="application/json")
+        response = self.client.post('/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Porn','Sports'],'desc': 'love and peace'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
 #  用例编号: 108
@@ -329,7 +329,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/gallery', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/gallery/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 7)
 
@@ -359,7 +359,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/gallery/more_cards', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/gallery/more_cards/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 4)
 
@@ -389,7 +389,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/text', {'id' : '10086'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/text/', {'id' : '10086'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(responseList['id'], '10086')
 
@@ -400,7 +400,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/store_passage', {'styles': 'style_1', 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/store_passage/', {'styles' : ['Porn','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -410,7 +410,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/finished_work', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/finished_work/', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -420,7 +420,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/download', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/download/', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -430,7 +430,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/confirm_store', {'workID': '11', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/confirm_store/', {'workID': '11', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -440,7 +440,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/destroy', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/destroy/', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -450,6 +450,6 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/collect', {'id': '10086'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/collect/', {'id': '10086'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)

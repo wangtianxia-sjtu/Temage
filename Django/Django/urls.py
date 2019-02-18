@@ -20,30 +20,30 @@ from django.conf.urls import url
 
 api_patterns = [
     path('', views.homepage_data),
-    path('work/<int:work_id>', views.work_data),
-    path('gallery', views.gallery_data),
-    path('gallery/more_cards', views.gallery_more_cards),
-    path('collection', views.collection_data),
-    path('recent', views.rescent_data),
-    path('text', views.text),
-    path('collect', views.collect),
-    path('pic_post', views.pic_post),
-    path('text_post', views.text_post),
-    path('ret_html', views.ret_html),
-    path('store_passage', views.store_passage),
-    path('finished_work', views.finished_work),
-    path('download', views.download),
-    path('confirm_store', views.confirm_store),
-    path('destroy', views.destroy),
+    path('work/<int:work_id>/', views.work_data),
+    path('gallery/', views.gallery_data),
+    path('gallery/more_cards/', views.gallery_more_cards),
+    path('collection/', views.collection_data),
+    path('recent/', views.rescent_data),
+    path('text/', views.text),
+    path('collect/', views.collect),
+    path('pic_post/', views.pic_post),
+    path('text_post/', views.text_post),
+    path('ret_html/', views.ret_html),
+    path('store_passage/', views.store_passage),
+    path('finished_work/', views.finished_work),
+    path('download/', views.download),
+    path('confirm_store/', views.confirm_store),
+    path('destroy/', views.destroy),
 ]
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(api_patterns)),
-    path('register', views.register),
+    path('register/', views.register),
     path('login/submit/', views.login_submit),
-    path('authenticate', views.JWTauthenticate),
+    path('authenticate/', views.JWTauthenticate),
 
     # for quick model test
     path('test/', views.test),

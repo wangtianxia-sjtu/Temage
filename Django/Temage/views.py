@@ -318,13 +318,17 @@ def store_passage(request):
         identity = payload['id']
         post_body = json.loads(request.body)
         user = Profile.objects.get(user__id=identity)
-        style_name = post_body['styles']
-        style = Style.objects.get(name=style_name)
+        style_names = post_body['styles']
         html = post_body['res_html']
         title = post_body['title']
         width = post_body['t_width']
         score = 0
-        product = Product.objects.create(title=title, html=html, creator=user,style=style, score=score, width=width)
+        # only for test
+        css = Style.objects.get(name="style_1")
+        product = Product.objects.create(title=title, html=html, creator=user, style=css, score=score, width=width)
+        for style_name in style_names:
+            style = Theme.objects.get(name=style_name)
+            product.theme.add(style)
         content = {}
         content['id'] = product.id
         return HttpResponse(json.dumps(content), status=200, content_type="application/json")
