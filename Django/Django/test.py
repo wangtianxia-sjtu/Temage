@@ -389,9 +389,9 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/text/', {'id' : '10086'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/text/', {'id' : '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
-        self.assertEqual(responseList['id'], '10086')
+        self.assertEqual(responseList['id'], '18')
 
 
     def testStorePassage(self):

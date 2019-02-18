@@ -192,18 +192,18 @@ def rescent_data(request):
 
 def text(request):
     if request.method == 'POST':
-        card_id = json.loads(request.body)['id']
-        card = Card.objects.get(id=card_id)
+        product_id = json.loads(request.body)['id']
+        product = Product.objects.get(id=product_id)
         content = {}
         userInfo = {}
-        userInfo['username'] = card.creator.user.username
-        userInfo['id'] = card.creator.user.id
-        userInfo['avator'] = str(card.creator.avator)
-        content['id'] = card_id
-        content['text'] = card.product.html
+        userInfo['username'] = product.creator.user.username
+        userInfo['id'] = product.creator.user.id
+        userInfo['avator'] = str(product.creator.avator)
+        content['id'] = product_id
+        content['text'] = product.html
         content['creator'] = userInfo
-        content['title'] = card.title
-        themes = card.product.theme.all()
+        content['title'] = product.title
+        themes = product.theme.all()
         themelist = []
         for theme in themes:
             themelist.append(theme.name)
