@@ -219,7 +219,7 @@ def collect(request):
         card_id = post_body['id']
         try:
             user = Profile.objects.get(user__id=identity)
-            card = Card.objects.get(id=card_id)
+            card = Card.objects.get(product__id=card_id)
             collection = user.collections.get(id=1)
             collection.cards.add(card)
             return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")

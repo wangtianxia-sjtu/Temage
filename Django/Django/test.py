@@ -392,6 +392,8 @@ class ModelTest(TestCase):
         responseAPI = self.client.post('/api/text/', {'id' : '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(responseList['id'], '18')
+        print("testtext")
+        print(responseList)
 
 
     def testStorePassage(self):
