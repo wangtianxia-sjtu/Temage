@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate
 from django.core.files import File
 import jwt
 import json
+from django.core.files.base import ContentFile
 
 # global variable of html string for test
 htmlmessi = '<p> Messi is Back! </p>'
@@ -69,6 +70,7 @@ class ModelTest(TestCase):
         product6 = Product.objects.create(title="product_6", html="<p>hot day</p>", creator=profile1,style=style7, score=0.7, id=16, width=400)
         product7 = Product.objects.create(title="product_7", html="<p>hot day</p>", creator=profile1,style=style8, score=0.7, id=17, width=400)
         product8 = Product.objects.create(title="Messi is Back!", html = htmlmessi, creator=profile1,style=style10, score=0.9, id=18, width=400)
+        product8.htmlfile.save("html_18.html", ContentFile(htmlmessi))
         product1.imagesrc.save('good.jpg', File(img1), save=True)
         product2.imagesrc.save('bad.jpg', File(img2), save=True)
         product3.imagesrc.save('cold.jpg', File(img3), save=True)
@@ -82,14 +84,14 @@ class ModelTest(TestCase):
         product2.theme.add(theme2)
         product8.theme.add(theme1)
         product8.theme.add(theme6)
-        card1 = Card.objects.create(creator=profile1, product=product1, title="positive", prompt="A positive people said...", head="head content", foottext="foot content", id=1)
+        card1 = Card.objects.create(creator=profile1, product=product1, title="positive", prompt="A positive people said...", head="head content", foottext="foot content")
         card2 = Card.objects.create(creator=profile1, product=product2, title="negative", prompt="A negative people said...", head="head content", foottext="foot content")
         card3 = Card.objects.create(creator=profile1, product=product3, title="cold", prompt="A cold people said...", head="head content", foottext="foot content")
         card4 = Card.objects.create(creator=profile1, product=product4, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
         card5 = Card.objects.create(creator=profile1, product=product5, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
         card6 = Card.objects.create(creator=profile1, product=product6, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
         card7 = Card.objects.create(creator=profile1, product=product7, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
-        card8 = Card.objects.create(creator=profile1, product=product8, title = "Messi is Back!", prompt="Messi the Best", head="head content", foottext="foot content", id=10086)
+        card8 = Card.objects.create(creator=profile1, product=product8, title = "Messi is Back!", prompt="Messi the Best", head="head content", foottext="foot content")
         collection1 = Collection.objects.create(name = "quote", user=profile1, id=1)
         collection1.cards.add(card1)
         collection1.cards.add(card2)
@@ -412,7 +414,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/finished_work/', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/finished_work/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print("testFinished")
         print(responseList)
@@ -423,7 +425,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/download/', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/download/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -433,7 +435,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/confirm_store/', {'workID': '11', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/confirm_store/', {'workID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -443,7 +445,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/destroy/', {'workID': '11'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/destroy/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
 
@@ -453,6 +455,6 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/collect/', {'id': '10086'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)

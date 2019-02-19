@@ -43,6 +43,7 @@ class Product(CommonThemes):
     updateTime = models.DateTimeField(auto_now=True)
     isfinished = models.BooleanField(default=0)
     width = models.IntegerField()
+    htmlfile = models.FileField(upload_to='html')
     def __str__(self):
         return self.id
     class Meta:

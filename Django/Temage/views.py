@@ -11,6 +11,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 import json
 from django.contrib.auth import authenticate, login
+from django.core.files.base import ContentFile
 
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files import File
@@ -325,10 +326,15 @@ def store_passage(request):
         score = 0
         # only for test
         css = Style.objects.get(name="style_1")
-        product = Product.objects.create(title=title, html=html, creator=user, style=css, score=score, width=width)
+        product = Product.objects.create(title=title, html=html, creator=user, style=css, score=score, width=width, id=19)
         for style_name in style_names:
             style = Theme.objects.get(name=style_name)
             product.theme.add(style)
+
+        # store htmlfile
+        file_name = "html_" + str(product.id) + ".html"
+        product.htmlfile.save(file_name, ContentFile(html))
+
         content = {}
         content['ID'] = product.id
         return HttpResponse(json.dumps(content), status=200, content_type="application/json")
@@ -339,7 +345,7 @@ def finished_work(request):
         work_id = post_body['workID']
         work = Product.objects.get(id=work_id)
         width = work.width
-        url = "/api/work/" + str(work_id) + "/"
+        url = work.htmlfile.url
         content = {}
         content['url'] = url
         content['width'] = width
