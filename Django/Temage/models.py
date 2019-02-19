@@ -4,21 +4,7 @@ from polymorphic.models import PolymorphicModel
 
 # Create your models here.
 class CommonThemes(PolymorphicModel):
-    pass
-
-class Theme(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
-    owner = models.ManyToManyField(CommonThemes, related_name='theme')
-
-class Profile(CommonThemes):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='extension')
-    # sex = models.BooleanField(default=0)
-    # phone = models.CharField(max_length=15, null=False)
-    avator = models.ImageField(upload_to='img/avator')
-    # interest = models.ManyToManyField(Theme)
-    def __str__(self):
-        return self.user.username
 
 class Style(models.Model):
     id = models.AutoField(primary_key=True)
@@ -27,10 +13,28 @@ class Style(models.Model):
     def __str__(self):
         return self.id
 
+class Theme(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+    owner = models.ManyToManyField(CommonThemes, related_name='theme')
+    styles = models.ManyToManyField(Style)
+    def __str__(self):
+        return self.id
+
+class Profile(CommonThemes):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='extension')
+    # sex = models.BooleanField(default=0)
+    # phone = models.CharField(max_length=15, null=False)
+    avator = models.ImageField(upload_to='img/avator')
+    # interest = models.ManyToManyField(Theme)
+    def __str__(self):
+        return self.user.id
+
+
 class Product(CommonThemes):
     # id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
-    imagesrc = models.ImageField(upload_to='img/pimg')
+    image_src = models.ImageField(upload_to='img/pimg')
     html = models.TextField(blank=True)
     # theme = models.ManyToManyField(Theme)
     #path = models.CharField(max_length=255)
@@ -39,15 +43,15 @@ class Product(CommonThemes):
     time = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='products')
     style = models.ForeignKey(Style, on_delete=models.DO_NOTHING, related_name='products')
-    createTime = models.DateTimeField(auto_now_add=True)
-    updateTime = models.DateTimeField(auto_now=True)
-    isfinished = models.BooleanField(default=0)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+    is_finished = models.BooleanField(default=0)
     width = models.IntegerField()
-    htmlfile = models.FileField(upload_to='html')
+    html_file = models.FileField(upload_to='html')
     def __str__(self):
         return self.id
     class Meta:
-        ordering = ['-updateTime']
+        ordering = ['-update_time']
 
 
 class Card(models.Model):
@@ -58,26 +62,26 @@ class Card(models.Model):
     title = models.CharField(max_length=50)
     prompt = models.TextField()
     head = models.CharField(max_length=255)
-    foottext = models.CharField(max_length = 255)
-    createTime = models.DateTimeField(auto_now_add=True)
-    updateTime = models.DateTimeField(auto_now=True)
+    foot_text = models.CharField(max_length = 255)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.id
     class Meta:
-        ordering = ['-createTime']
+        ordering = ['-create_time']
 
 class Collection(models.Model):
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='collections')
+    user = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='collection')
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    cards = models.ManyToManyField(Card)
+    cards = models.ManyToManyField(Card, related_name='collections')
     prompt = models.TextField()
     url = models.CharField(max_length=255)
-    createTime = models.DateTimeField(auto_now_add=True)
+    create_time = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.id
     class Meta:
-        ordering = ['-createTime']
+        ordering = ['-create_time']
 
 
     

@@ -42,42 +42,39 @@ def homepage_data(request):
     for card in recentpic:
         card_info = {}
         card_info['title'] = card.product.title
-        card_info['imgsrc'] = str(card.product.imagesrc)
+        card_info['imgsrc'] = str(card.product.image_src)
         card_info['promt'] = card.prompt
         card_info['id'] = card.product.id
         reclist.append(card_info)
-    collectionlist = user.collections.all()[:2]
-    collist = []
-    for col in collectionlist:
-        cards = col.cards.all()
-        cards_info = []
-        for card in cards:
-            card_info = {}
-            card_info['title'] = card.product.title
-            card_info['imgsrc'] = str(card.product.imagesrc)
-            card_info['prompt'] = card.prompt
-            card_info['id'] = card.product.id
-            cards_info.append(card_info)
-        collist.append(cards_info)
+    collection = user.collection
+    cards = collection.cards.all()
+    cards_info = []
+    for card in cards:
+        card_info = {}
+        card_info['title'] = card.product.title
+        card_info['imgsrc'] = str(card.product.image_src)
+        card_info['prompt'] = card.prompt
+        card_info['id'] = card.product.id
+        cards_info.append(card_info)
     intrests = list(user.theme.all().values('id'))
     cards = Card.objects.filter(product__theme__id=intrests[0]['id'])[:2]
     gallist = []
     for card in cards:
         card_info = {}
         card_info['title'] = card.product.title
-        card_info['imgsrc'] = str(card.product.imagesrc)
+        card_info['imgsrc'] = str(card.product.image_src)
         card_info['promt'] = card.prompt
         card_info['id'] = card.product.id
         gallist.append(card_info)
-    userInfo = {}
-    userInfo['username'] = user.user.username
-    userInfo['id'] = user.user.id
-    userInfo['avator'] = str(user.avator)
+    user_info = {}
+    user_info['username'] = user.user.username
+    user_info['id'] = user.user.id
+    user_info['avator'] = str(user.avator)
     relist = {}
     relist['recent_pics'] = reclist
-    relist['collect_pics'] = collist[1]
+    relist['collect_pics'] = cards_info
     relist['gallery_pics'] = gallist
-    relist['user_info'] = userInfo
+    relist['user_info'] = user_info
     return HttpResponse(json.dumps(relist), content_type="application/json")
 
 def work_data(request, work_id):
@@ -109,72 +106,69 @@ def gallery_data(request):
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
     cards = Card.objects.all()
-    cardsInfo = []
+    cards_info = []
     if cards.count() > 7:
         cards = cards[:7]
 
     for card in cards:
-        cardinfo = {}
-        userInfo = {}
-        userInfo['username'] = card.creator.user.username
-        userInfo['id'] = card.creator.user.id
-        userInfo['avator'] = str(card.creator.avator)
-        cardinfo['id'] = card.product.id
-        cardinfo['creator'] = userInfo
-        cardinfo['title'] = card.title
-        cardinfo['imagesrc'] = str(card.product.imagesrc)
-        cardinfo['head'] = card.head
-        cardinfo['maintext'] = card.prompt
-        cardinfo['foottext'] = card.foottext
-        cardsInfo.append(cardinfo)
-    return HttpResponse(json.dumps(cardsInfo), content_type="application/json")
+        card_info = {}
+        user_info = {}
+        user_info['username'] = card.creator.user.username
+        user_info['id'] = card.creator.user.id
+        user_info['avator'] = str(card.creator.avator)
+        card_info['id'] = card.product.id
+        card_info['creator'] = user_info
+        card_info['title'] = card.title
+        card_info['imagesrc'] = str(card.product.image_src)
+        card_info['head'] = card.head
+        card_info['maintext'] = card.prompt
+        card_info['foottext'] = card.foot_text
+        cards_info.append(card_info)
+    return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
 def gallery_more_cards(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
     cards = Card.objects.order_by('?')[:4]
-    cardsInfo = []
+    cards_info = []
     for card in cards:
-        cardinfo = {}
-        userInfo = {}
-        userInfo['username'] = card.creator.user.username
-        userInfo['id'] = card.creator.user.id
-        userInfo['avator'] = str(card.creator.avator)
-        cardinfo['id'] = card.product.id
-        cardinfo['creator'] = userInfo
-        cardinfo['imagesrc'] = str(card.product.imagesrc)
-        cardinfo['title'] = card.title
-        cardinfo['head'] = card.head
-        cardinfo['maintext'] = card.prompt
-        cardinfo['foottext'] = card.foottext
-        cardsInfo.append(cardinfo)
-    return HttpResponse(json.dumps(cardsInfo), content_type="application/json")
+        card_info = {}
+        user_info = {}
+        user_info['username'] = card.creator.user.username
+        user_info['id'] = card.creator.user.id
+        user_info['avator'] = str(card.creator.avator)
+        card_info['id'] = card.product.id
+        card_info['creator'] = user_info
+        card_info['imagesrc'] = str(card.product.image_src)
+        card_info['title'] = card.title
+        card_info['head'] = card.head
+        card_info['maintext'] = card.prompt
+        card_info['foottext'] = card.foot_text
+        cards_info.append(card_info)
+    return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
 def collection_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
-    collectionlist = Profile.objects.get(user__id=identity).collections.all()
-    collections = []
-    for col in collectionlist:
-        cards = col.cards.all()
-        cardsInfo = []
-        for card in cards:
-            userInfo = {}
-            cardinfo = {}
-            userInfo['username'] = card.creator.user.username
-            userInfo['id'] = card.creator.user.id
-            userInfo['avator'] = str(card.creator.avator)
-            cardinfo['name'] = card.product.title
-            cardinfo['imagesrc'] = str(card.product.imagesrc)
-            cardinfo['prompt'] = card.prompt
-            cardinfo['id'] = card.product.id
-            cardinfo['creator'] = userInfo
-            cardinfo['title'] = card.title
-            cardsInfo.append(cardinfo)
-        collections.append(cardsInfo)
-    return HttpResponse(json.dumps(collections[1]), content_type="application/json")
+    collection = Profile.objects.get(user__id=identity).collection
+    cards = collection.cards.all()
+    cards_info = []
+    for card in cards:
+        user_info = {}
+        card_info = {}
+        user_info['username'] = card.creator.user.username
+        user_info['id'] = card.creator.user.id
+        user_info['avator'] = str(card.creator.avator)
+        card_info['name'] = card.product.title
+        card_info['imagesrc'] = str(card.product.image_src)
+        card_info['prompt'] = card.prompt
+        card_info['id'] = card.product.id
+        card_info['creator'] = user_info
+        card_info['title'] = card.title
+        cards_info.append(card_info)
+    return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
 def rescent_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
@@ -185,7 +179,7 @@ def rescent_data(request):
     for pic in recentpic:
         picinfo = {}
         picinfo['title'] = pic.product.title
-        picinfo['img_url'] = str(pic.product.imagesrc)
+        picinfo['img_url'] = str(pic.product.image_src)
         picinfo['promt'] = pic.prompt
         picinfo['id'] = pic.product.id
         reclist.append(picinfo)
@@ -196,13 +190,13 @@ def text(request):
         product_id = json.loads(request.body)['id']
         product = Product.objects.get(id=product_id)
         content = {}
-        userInfo = {}
-        userInfo['username'] = product.creator.user.username
-        userInfo['id'] = product.creator.user.id
-        userInfo['avator'] = str(product.creator.avator)
+        user_info = {}
+        user_info['username'] = product.creator.user.username
+        user_info['id'] = product.creator.user.id
+        user_info['avator'] = str(product.creator.avator)
         content['id'] = product_id
         content['text'] = product.html
-        content['creator'] = userInfo
+        content['creator'] = user_info
         content['title'] = product.title
         themes = product.theme.all()
         themelist = []
@@ -221,12 +215,43 @@ def collect(request):
         try:
             user = Profile.objects.get(user__id=identity)
             card = Card.objects.get(product__id=card_id)
-            collection = user.collections.get(id=1)
+            collection = user.collection
             collection.cards.add(card)
             return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
         except:
             return HttpResponse(json.dumps("failed"), status=400, content_type="application/json")
 
+def delete_product(request):
+    if request.method == 'POST':
+        post_body = json.loads(request.body)
+        work_id = post_body['workID']
+        try:
+            product = Product.objects.get(id = work_id)
+            product.delete()
+            return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
+        except:
+            return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
+
+def cancel_collect(request):
+    if request.method == 'POST':
+        token = request.META.get("HTTP_AUTHORIZATION")
+        payload = jwt.decode(token, "Temage")
+        identity = payload['id']
+
+        user = Profile.objects.get(user__id=identity)
+
+        post_body = json.loads(request.body)
+        work_id = post_body['id']
+        try:
+            card = Card.objects.get(product__id=work_id)
+            collection = user.collection
+            if (collection.cards.filter(product__id=work_id).count() == 0):
+                return HttpResponse(json.dumps("This work has already been removed!"), status = 402, content_type = "application/json")
+            else:
+                card.collections.remove(collection)
+                return HttpResponse(json.dumps("Succeed"), status=200, content_type = "application/json")
+        except:
+            return HttpResponse(json.dumps("Something wrong"), status = 400, content_type="application/json")
 
 ####################################################################
 # Interfaces for register and login, and also identity authenticate
@@ -333,7 +358,7 @@ def store_passage(request):
 
         # store htmlfile
         file_name = "html_" + str(product.id) + ".html"
-        product.htmlfile.save(file_name, ContentFile(html))
+        product.html_file.save(file_name, ContentFile(html))
 
         content = {}
         content['ID'] = product.id
@@ -345,7 +370,7 @@ def finished_work(request):
         work_id = post_body['workID']
         work = Product.objects.get(id=work_id)
         width = work.width
-        url = work.htmlfile.url
+        url = work.html_file.url
         content = {}
         content['url'] = url
         content['width'] = width
@@ -371,36 +396,9 @@ def confirm_store(request):
         stars = post_body['stars']
         try:
             product = Product.objects.get(id = work_id)
-            product.isfinished = 1
+            product.is_finished = 1
             product.score = stars
             return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
         except:
             return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
 
-def destroy(request):
-    if request.method == 'POST':
-        post_body = json.loads(request.body)
-        work_id = post_body['workID']
-        try:
-            product = Product.objects.get(id = work_id)
-            product.delete()
-            return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
-        except:
-            return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
-
-# for models test by hand
-def test(request):
-    user = Profile.objects.get(user__id=1)
-    themelist = user.theme.all().values('name')
-    productlist = user.products.all().values('title')
-    collectionlist = user.collections.all()
-    collections = []
-    print(type(collectionlist))
-    for col in collectionlist:
-        cards = col.cards.all()
-        cardinfo = []
-        for card in cards:
-            cardinfo.append([card.title, card.prompt])
-        collections.append([col.name, cardinfo])
-    relist = [list(themelist), list(productlist), collections]
-    return HttpResponse(json.dumps(relist), content_type="application/json")

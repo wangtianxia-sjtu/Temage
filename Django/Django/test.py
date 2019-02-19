@@ -70,35 +70,33 @@ class ModelTest(TestCase):
         product6 = Product.objects.create(title="product_6", html="<p>hot day</p>", creator=profile1,style=style7, score=0.7, id=16, width=400)
         product7 = Product.objects.create(title="product_7", html="<p>hot day</p>", creator=profile1,style=style8, score=0.7, id=17, width=400)
         product8 = Product.objects.create(title="Messi is Back!", html = htmlmessi, creator=profile1,style=style10, score=0.9, id=18, width=400)
-        product8.htmlfile.save("html_18.html", ContentFile(htmlmessi))
-        product1.imagesrc.save('good.jpg', File(img1), save=True)
-        product2.imagesrc.save('bad.jpg', File(img2), save=True)
-        product3.imagesrc.save('cold.jpg', File(img3), save=True)
-        product4.imagesrc.save('hot.jpg', File(img4), save=True)
-        product5.imagesrc.save('hot.jpg', File(img4), save=True)
-        product6.imagesrc.save('hot.jpg', File(img4), save=True)
-        product7.imagesrc.save('hot.jpg', File(img4), save=True)
-        product8.imagesrc.save('hot.jpg', File(img4), save=True)
+        product8.html_file.save("html_18.html", ContentFile(htmlmessi))
+        product1.image_src.save('good.jpg', File(img1), save=True)
+        product2.image_src.save('bad.jpg', File(img2), save=True)
+        product3.image_src.save('cold.jpg', File(img3), save=True)
+        product4.image_src.save('hot.jpg', File(img4), save=True)
+        product5.image_src.save('hot.jpg', File(img4), save=True)
+        product6.image_src.save('hot.jpg', File(img4), save=True)
+        product7.image_src.save('hot.jpg', File(img4), save=True)
+        product8.image_src.save('hot.jpg', File(img4), save=True)
         product1.theme.add(theme1)
         product1.theme.add(theme2)
         product2.theme.add(theme2)
         product8.theme.add(theme1)
         product8.theme.add(theme6)
-        card1 = Card.objects.create(creator=profile1, product=product1, title="positive", prompt="A positive people said...", head="head content", foottext="foot content")
-        card2 = Card.objects.create(creator=profile1, product=product2, title="negative", prompt="A negative people said...", head="head content", foottext="foot content")
-        card3 = Card.objects.create(creator=profile1, product=product3, title="cold", prompt="A cold people said...", head="head content", foottext="foot content")
-        card4 = Card.objects.create(creator=profile1, product=product4, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
-        card5 = Card.objects.create(creator=profile1, product=product5, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
-        card6 = Card.objects.create(creator=profile1, product=product6, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
-        card7 = Card.objects.create(creator=profile1, product=product7, title="hot", prompt="A hot people said...", head="head content", foottext="foot content")
-        card8 = Card.objects.create(creator=profile1, product=product8, title = "Messi is Back!", prompt="Messi the Best", head="head content", foottext="foot content")
-        collection1 = Collection.objects.create(name = "quote", user=profile1, id=1)
-        collection1.cards.add(card1)
-        collection1.cards.add(card2)
-        collection1.cards.add(card3)
-        collection1.cards.add(card4)
-        collection2 = Collection.objects.create(name="requote", user=profile1)
-        collection2.cards.add(card1)
+        card1 = Card.objects.create(creator=profile1, product=product1, title="positive", prompt="A positive people said...", head="head content", foot_text="foot content")
+        card2 = Card.objects.create(creator=profile1, product=product2, title="negative", prompt="A negative people said...", head="head content", foot_text="foot content")
+        card3 = Card.objects.create(creator=profile1, product=product3, title="cold", prompt="A cold people said...", head="head content", foot_text="foot content")
+        card4 = Card.objects.create(creator=profile1, product=product4, title="hot", prompt="A hot people said...", head="head content", foot_text="foot content")
+        card5 = Card.objects.create(creator=profile1, product=product5, title="hot", prompt="A hot people said...", head="head content", foot_text="foot content")
+        card6 = Card.objects.create(creator=profile1, product=product6, title="hot", prompt="A hot people said...", head="head content", foot_text="foot content")
+        card7 = Card.objects.create(creator=profile1, product=product7, title="hot", prompt="A hot people said...", head="head content", foot_text="foot content")
+        card8 = Card.objects.create(creator=profile1, product=product8, title = "Messi is Back!", prompt="Messi the Best", head="head content", foot_text="foot content")
+        collection = Collection.objects.create(name = "quote", user=profile1)
+        collection.cards.add(card1)
+        collection.cards.add(card2)
+        collection.cards.add(card3)
+        collection.cards.add(card4)
     
 
 #  用例编号: 001{前端} 101{后端}
@@ -118,7 +116,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议:
 #  测试经验总结:
 
-    def testSuperuser(self):
+    def test_superuser(self):
         super_user = User.objects.filter(is_superuser=True)
         self.assertEqual(len(super_user),1)
 
@@ -138,7 +136,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testPolymorphicManytomany(self):
+    def test_polymorphic_manytomany(self):
         user = Profile.objects.get(user__username='qxy')
         themelist_of_user = user.theme.all().values('name')
         list1 = list(themelist_of_user)
@@ -161,7 +159,7 @@ class ModelTest(TestCase):
 # 		  备注: 无
 #  测试结果综合分析及建议: Succeed
 #  测试经验总结: 无
-    def testLogin(self):
+    def test_login(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
@@ -185,7 +183,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testApi(self):
+    def test_api(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -215,7 +213,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testApiWork(self):
+    def test_work(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -245,7 +243,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testApiCollection(self):
+    def test_collection(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -275,7 +273,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testApiRecent(self):
+    def test_recent(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -301,7 +299,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testRegister(self):
+    def test_register(self):
         response = self.client.post('/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Porn','Sports'],'desc': 'love and peace'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
@@ -325,7 +323,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testApiGallery(self):
+    def test_gallery(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -355,7 +353,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testApiGalleryMoreCard(self):
+    def test_gallery_more_card(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -385,7 +383,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def testApiText(self):
+    def test_text(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -394,11 +392,11 @@ class ModelTest(TestCase):
         responseAPI = self.client.post('/api/text/', {'id' : '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(responseList['id'], '18')
-        print("testtext")
-        print(responseList)
+        # print("testtext")
+        # print(responseList)
 
 
-    def testStorePassage(self):
+    def test_store_passage(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -406,9 +404,9 @@ class ModelTest(TestCase):
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/store_passage/', {'styles' : ['Porn','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
-        print(responseList)
+        # print(responseList)
 
-    def testFinishedWork(self):
+    def test_finished_work(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -416,10 +414,10 @@ class ModelTest(TestCase):
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/finished_work/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
-        print("testFinished")
-        print(responseList)
+        # print("testFinished")
+        # print(responseList)
 
-    def testDownload(self):
+    def test_download(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -427,9 +425,9 @@ class ModelTest(TestCase):
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/download/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
-        print(responseList)
+        # print(responseList)
 
-    def testConfirmStore(self):
+    def test_confirm_store(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -437,17 +435,17 @@ class ModelTest(TestCase):
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/confirm_store/', {'workID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
-        print(responseList)
+        # print(responseList)
 
-    def testDestroy(self):
+    def test_delete(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/destroy/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/delete/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
-        print(responseList)
+        # print(responseList)
 
     def testCollect(self):
         response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
@@ -456,5 +454,19 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseList = json.loads(responseAPI.content)
+        # print(responseList)
+
+    def testCancelCollect(self):
+        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        responseAPI = self.client.post('/api/cancel_collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseList = json.loads(responseAPI.content)
+        print(responseList)
+        self.client.post('/api/collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/cancel_collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)

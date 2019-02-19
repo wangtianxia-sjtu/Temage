@@ -34,7 +34,8 @@ api_patterns = [
     path('finished_work/', views.finished_work),
     path('download/', views.download),
     path('confirm_store/', views.confirm_store),
-    path('destroy/', views.destroy),
+    path('delete/', views.delete_product),
+    path('cancel_collect/', views.cancel_collect),
 ]
 
 
@@ -44,7 +45,4 @@ urlpatterns = [
     path('register/', views.register),
     path('login/submit/', views.login_submit),
     path('authenticate/', views.JWTauthenticate),
-
-    # for quick model test
-    path('test/', views.test),
 ]
