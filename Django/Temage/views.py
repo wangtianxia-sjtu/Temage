@@ -172,7 +172,7 @@ def post_search(request):
         card_info['maintext'] = card.prompt
         card_info['foottext'] = card.foot_text
         cards_info.append(card_info)
-    return HttpResponse(json.dumps({"total": res_data['hits']['total'],"cards":cards_info}), content_type="application/json")
+    return HttpResponse(json.dumps({"cards":cards_info}), content_type="application/json")
     
 
 def collection_data(request):
