@@ -31,6 +31,7 @@
    python manage.py droptables # clean the db
    python manage.py makemigrations Temage # convert models to migrations
    python manage.py migrate Temage # migrate into the database
+   python manage.py migrate auth # migrate auth tables into the db
    ```
 
 4. start Django server and Tornado server
@@ -41,6 +42,17 @@
    cd /your/local/path/Temage/tornado
    python server.py
    ```
+
+5. start ElasticSearch & Kibana
+
+   ```bash
+   cd /your/local/path/ElasticSearch # start elastic application
+   ./bin/elasticsearch
+   cd /your/local/path/Kibana # start kibana application
+   ./bin/kibana
+   ```
+
+   
 
 ## Deploy
 

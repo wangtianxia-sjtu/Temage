@@ -3,18 +3,17 @@ import jwt
 from Temage.models import User
 class TokenMiddleware(object):
     def __init__(self, get_response):
-        print("程序启动时执行, 只执行一次")
         self.get_response = get_response
  
     def __call__(self, request):
-        print("中间件开始")
         response = self.get_response(request)
         print("中间件结束")
         return response
  
     def process_view(self, request, view_func, view_args, view_kwargs):
         path = request.path
-        if (path == '/login/submit/' or path == '/register'):
+        print(path)
+        if (path == '/login/submit/' or path == '/register/' or path == '/admin/' or path=='/admin/login/'):
             return None
         token = request.META.get("HTTP_AUTHORIZATION")
         if token:

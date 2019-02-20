@@ -11,7 +11,7 @@ class Style(models.Model):
     name = models.CharField(max_length=50)
     path = models.CharField(max_length=255)
     def __str__(self):
-        return self.id
+        return (self.id)
 
 class Theme(models.Model):
     id = models.AutoField(primary_key=True)
@@ -19,16 +19,17 @@ class Theme(models.Model):
     owner = models.ManyToManyField(CommonThemes, related_name='theme')
     styles = models.ManyToManyField(Style)
     def __str__(self):
-        return self.id
+        return (self.id)
 
 class Profile(CommonThemes):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='extension')
     # sex = models.BooleanField(default=0)
     # phone = models.CharField(max_length=15, null=False)
     avator = models.ImageField(upload_to='img/avator')
+    vector = models.TextField(blank=True)
     # interest = models.ManyToManyField(Theme)
     def __str__(self):
-        return self.user.id
+        return (self.user.id)
 
 
 class Product(CommonThemes):
@@ -49,10 +50,9 @@ class Product(CommonThemes):
     width = models.IntegerField()
     html_file = models.FileField(upload_to='html')
     def __str__(self):
-        return self.id
+        return str(self.id)
     class Meta:
         ordering = ['-update_time']
-
 
 class Card(models.Model):
     # id = models.AutoField(primary_key=True)
@@ -66,7 +66,7 @@ class Card(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     def __str__(self):
-        return self.id
+        return str(self.id)
     class Meta:
         ordering = ['-create_time']
 
@@ -79,7 +79,7 @@ class Collection(models.Model):
     url = models.CharField(max_length=255)
     create_time = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.id
+        return str(self.id)
     class Meta:
         ordering = ['-create_time']
 

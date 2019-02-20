@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'Temage.middleware.auth.TokenMiddleware'
+    #'Temage.middleware.auth.TokenMiddleware'
 ]
 
 ROOT_URLCONF = 'Django.urls'
@@ -151,7 +151,7 @@ PRE_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 MEDIA_ROOT = os.path.join(PRE_ROOT,'media')
 MEDIA_URL = '../media/'
 
-#sentry settings
+# sentry settings
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -159,3 +159,8 @@ sentry_sdk.init(
     dsn="https://01a7e750f90f44ec9a0fd2c4d608c4c9@sentry.io/1395787",
     integrations=[DjangoIntegration()]
 )
+
+# ES settings
+ES_CREATE_URL = 'http://127.0.0.1:9200/temage/product/'
+ES_DELETE_URL = 'http://127.0.0.1:9200/temage/product/_delete_by_query/'
+ES_SEARCH_URL = 'http://127.0.0.1:9200/temage/product/_search'

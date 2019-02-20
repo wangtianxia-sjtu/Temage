@@ -9,6 +9,7 @@ import jieba
 import re
 import copy
 import json
+import numpy as np
 class EmbeddingHandler(RequestHandler):
     def set_default_headers(self):
         self.set_header('Access-Control-Allow-Origin', '*')
@@ -25,9 +26,11 @@ class EmbeddingHandler(RequestHandler):
         #embedding_result是一个m*x*1024的矩阵，第一个代表句子数量，第二个是具体某个句子的单词数量，第三个是每个单词的维度
         embedding_result = embedding.sents2elmo(words_cut)
         result = []
-        for element in embedding_result:
-            result.append(element.tolist())
-        return result
+        for index, sentence in enumerate(embedding_result):
+            if index >= self.min_length:
+                break
+            result.append(np.mean(sentence, axis=0).tolist())
+        return np.array(result)
         
     def post(self, *args, **kwargs):
         #with the shape=(setence_num, words_num, embedding_size)
@@ -42,14 +45,17 @@ class EmbeddingHandler(RequestHandler):
             result = jieba.lcut(sent,cut_all=False)
             article.append(copy.deepcopy(result))
         
-        # self.write(json.dumps(article, ensure_ascii=False))
-        # return 
+        # 20 * 1024
         embedding_result = self.get_words_embedding(article)
-        
         words_len = len(embedding_result)
-        while words_len < self.min_length:
-            embedding_result.append([0 for x in range(self.sentence_vector)])
-            words_len += 1
+        
         if words_len > self.min_length:
-            embedding_result = embedding_result[:self.min_length] 
+            embedding_result = embedding_result[:self.min_length]
+        print(embedding_result.shape)
+        embedding_result = embedding_result.reshape(1, embedding_result.shape[0], embedding_result.shape[1], 1)
+        print(embedding_result.shape)
+        embedding_result = embedding_result.tolist() 
+        while words_len < self.min_length:
+            embedding_result[0].append([0 for x in range(self.sentence_vector)])
+            words_len += 1
         self.write(json.dumps(embedding_result, ensure_ascii=False))

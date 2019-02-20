@@ -7,6 +7,7 @@ from Temage.models import Style
 from Temage.models import Collection
 from Temage.models import Theme
 from django.core.files import File
+from django.core.files.base import ContentFile
 
 htmlmessi = '<p> Messi is Back! </p>'
 

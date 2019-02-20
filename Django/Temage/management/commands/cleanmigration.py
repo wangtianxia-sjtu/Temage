@@ -14,6 +14,6 @@ class Command(BaseCommand):
             f.close()
 
         except:
-            raise CommandError("The seed command has something wrong.")
+            raise CommandError("The clean migrations command has something wrong.")
         else:
             self.stdout.write('Successfully clean migrations')

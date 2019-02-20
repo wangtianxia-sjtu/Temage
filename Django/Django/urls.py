@@ -24,7 +24,7 @@ api_patterns = [
     path('gallery/', views.gallery_data),
     path('gallery/more_cards/', views.gallery_more_cards),
     path('collection/', views.collection_data),
-    path('recent/', views.rescent_data),
+    path('recent/', views.recent_data),
     path('text/', views.text),
     path('collect/', views.collect),
     path('pic_post/', views.pic_post),
@@ -36,6 +36,7 @@ api_patterns = [
     path('confirm_store/', views.confirm_store),
     path('delete/', views.delete_product),
     path('cancel_collect/', views.cancel_collect),
+    path('post_search/', views.post_search)
 ]
 
 

@@ -1,6 +1,6 @@
 import tornado.web
 import config
-from views import index, embedding
+from views import index, embedding,image_match, history
 import sentry_sdk
 from sentry_sdk.integrations.tornado import TornadoIntegration
     
@@ -14,7 +14,9 @@ class Application(tornado.web.Application):
         # 路由
         handlers = [
             (r"/", index.IndexHandler),
-            (r"/embedding", embedding.EmbeddingHandler)
+            (r"/embedding", embedding.EmbeddingHandler),
+            (r"/image_match", image_match.ImageMatchHandler),
+            (r"/history_predict", history.HistoryHandler)
         ]
         super(Application, self).__init__(handlers, **config.settings)
         # 加入config里面的settings配置
