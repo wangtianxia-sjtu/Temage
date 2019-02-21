@@ -9,7 +9,7 @@ class CommonThemes(PolymorphicModel):
 class Style(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    path = models.CharField(max_length=255)
+    css = models.FileField(upload_to='css')
     def __str__(self):
         return (self.id)
 
@@ -41,7 +41,7 @@ class Product(CommonThemes):
     #path = models.CharField(max_length=255)
     vector = models.TextField(blank=True)
     score = models.FloatField(null=True)
-    time = models.DateTimeField(auto_now=True)
+    # time = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='products')
     style = models.ForeignKey(Style, on_delete=models.DO_NOTHING, related_name='products')
     create_time = models.DateTimeField(auto_now_add=True)
