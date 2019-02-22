@@ -3,12 +3,14 @@ from Temage.models import *
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-import json
 from django.contrib.auth import authenticate, login
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.core.files import File
+from django.views.decorators.http import require_GET, require_POST
+
 import jwt
+import json
 import random
 import requests
 
@@ -19,100 +21,106 @@ result_html = '<!DOCTYPE html><html><head>    <meta http-equiv="Content-Type" co
 ##########################
 # Interface for workflow
 ##########################
-def pic_post(request): # 需完善
+@require_POST
+def post_picture(request): # 需完善
     """
     Get pictures from users, and send them to the models.
     """
     
     return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
 
-def text_post(request): # 需完善
+@require_POST
+def post_text(request): # 需完善
     """
     Get text content from users, and send it with the pictures
     """
+    # token = request.META.get("HTTP_AUTHORIZATION")
+    # payload = jwt.decode(token, "Temage")
+    identity = 2
+    post_body = json.loads(request.body)
+    user = Profile.objects.get(user__id=identity)
+    product = Product.objects.create(title=post_body['title'], creator=user)
+    return HttpResponse(json.dumps({"product_id": product.id, "msg": "succeed"}), status=200, content_type="application/json")
 
-    return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
-
-def ret_html(request): # 需完善
+@require_POST
+def post_confirmed_style(request): # 需完善
     # 会有styles需要接收
     content = {}
     content['html'] = result_html
     return HttpResponse(json.dumps(content), content_type="application/json")
 
+@require_POST
 def store_passage(request):
-    if request.method == 'POST':
-        # token = request.META.get("HTTP_AUTHORIZATION")
-        # payload = jwt.decode(token, "Temage")
-        # identity = payload['id']
-        identity = 2
-        post_body = json.loads(request.body)
-        user = Profile.objects.get(user__id=identity)
-        style_names = post_body['styles']
-        html = post_body['res_html']
-        title = post_body['title']
-        width = post_body['t_width']
-        score = 0
-        # only for test
-        style = Style.objects.get(name=style_names[0])
-        product = Product.objects.create(title=title, html=html, creator=user, style=style, score=score, width=width)
+    # token = request.META.get("HTTP_AUTHORIZATION")
+    # payload = jwt.decode(token, "Temage")
+    # identity = payload['id']
+    identity = 2
+    post_body = json.loads(request.body)
+    user = Profile.objects.get(user__id=identity)
+    style_names = post_body['styles']
+    html = post_body['res_html']
+    title = post_body['title']
+    width = post_body['t_width']
+    score = 0
+    # only for test
+    style = Style.objects.get(name=style_names[0])
+    product = Product.objects.create(title=title, html=html, creator=user, style=style, score=score, width=width)
         
-        # for style_name in style_names:
-        #     style = Theme.objects.get(name=style_name)
-        #     product.theme.add(style)
+    # for style_name in style_names:
+    #     style = Theme.objects.get(name=style_name)
+    #     product.theme.add(style)
 
-        # store htmlfile
-        file_name = "html_" + str(product.id) + ".html"
-        product.html_file.save(file_name, ContentFile(html))
+    # store htmlfile
+    file_name = "html_" + str(product.id) + ".html"
+    product.html_file.save(file_name, ContentFile(html))
 
-        content = {}
-        content['ID'] = product.id
+    content = {}
+    content['ID'] = product.id
         
-        # ES index create start
-        index_data = {"title":title, "style":style_names, "ID": product.id}
-        res = requests.post(settings.ES_CREATE_URL, 
-                        headers = {'content-Type': 'application/json'},
-                        data = json.dumps(index_data)
-                    )
-        if res.status_code != 201:
-            raise RuntimeError("The ES index has not been updated, please start ES server or check the post data")
+    # ES index create start
+    index_data = {"title":title, "style":style_names, "ID": product.id}
+    res = requests.post(settings.ES_CREATE_URL, 
+                    headers = {'content-Type': 'application/json'},
+                    data = json.dumps(index_data)
+                )
+    if res.status_code != 201:
+        raise RuntimeError("The ES index has not been updated, please start ES server or check the post data")
         # ES index create end
 
         return HttpResponse(json.dumps(content), status = 200, content_type = "application/json")
 
+@require_POST
 def finished_work(request):
-    if request.method == 'POST':
-        post_body = json.loads(request.body)
-        work_id = post_body['workID']
-        work = Product.objects.get(id=work_id)
-        width = work.width
-        url = work.html_file.url
-        content = {}
-        content['url'] = url
-        content['width'] = width
-        return HttpResponse(json.dumps(content), content_type = "application/json")
+    post_body = json.loads(request.body)
+    product_id = post_body['product_id']
+    product = Product.objects.get(id=product_id)
+    width = product.width
+    url = product.html_file.url
+    content = {}
+    content['url'] = url
+    content['width'] = width
+    return HttpResponse(json.dumps(content), content_type = "application/json")
 
+@require_POST
 def download(request):
-    if request.method == 'POST':
-        post_body = json.loads(request.body)
-        work_id = post_body['workID']
-        # 生成长图
-        img_name = "boy.jpg"
-        url = "/media/img/pimg/" + str(img_name)
-        content = {}
-        content['url'] = url
-        return HttpResponse(json.dumps(content), content_type = "application/json")
+    post_body = json.loads(request.body)
+    product_id = post_body['product_id']
+    # 生成长图
+    img_name = "boy.jpg"
+    url = "/media/img/pimg/" + str(img_name)
+    content = {}
+    content['url'] = url
+    return HttpResponse(json.dumps(content), content_type = "application/json")
 
-    return HttpResponse(json.dumps(""), content_type = "application/json")
-
+@require_POST
 def confirm_store(request):
-    if request.method == 'POST':
-        post_body = json.loads(request.body)
-        work_id = post_body['workID']
-        stars = post_body['stars']
-        try:
-            product = Product.objects.get(id = work_id)
-            product.is_finished = 1
-            product.score = stars
-            return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
-        except:
-            return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
+    post_body = json.loads(request.body)
+    product_id = post_body['product_id']
+    stars = post_body['stars']
+    try:
+        product = Product.objects.get(id = product_id)
+        product.is_finished = 1
+        product.score = stars
+        return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
+    except:
+        return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")

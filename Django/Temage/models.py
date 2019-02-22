@@ -35,7 +35,7 @@ class Profile(CommonThemes):
 class Product(CommonThemes):
     # id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
-    image_src = models.ImageField(upload_to='img/pimg')
+    image_src = models.ImageField(null=True, upload_to='img/pimg')
     html = models.TextField(blank=True)
     # theme = models.ManyToManyField(Theme)
     #path = models.CharField(max_length=255)
@@ -43,11 +43,11 @@ class Product(CommonThemes):
     score = models.FloatField(null=True)
     # time = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='products')
-    style = models.ForeignKey(Style, on_delete=models.DO_NOTHING, related_name='products')
+    style = models.ForeignKey(Style, null=True, on_delete=models.DO_NOTHING, related_name='products')
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     is_finished = models.BooleanField(default=0)
-    width = models.IntegerField()
+    width = models.IntegerField(null=True)
     html_file = models.FileField(upload_to='html')
     def __str__(self):
         return str(self.id)

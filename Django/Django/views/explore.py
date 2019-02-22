@@ -3,19 +3,22 @@ from Temage.models import *
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-import json
 from django.contrib.auth import authenticate, login
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.core.files import File
+from django.views.decorators.http import require_GET, require_POST
+
 import jwt
+import json
 import random
 import requests
 
 ####################################################################
 # Interfaces for register and login, and also identity authenticate
 ####################################################################
-def homepage_data(request):
+@require_GET
+def get_homepage_data(request):
     """
     This is function that gets data for the homepage.
     Parameters:
@@ -65,70 +68,68 @@ def homepage_data(request):
     relist['user_info'] = user_info
     return HttpResponse(json.dumps(relist), content_type="application/json")
 
-def register(request):
-    if request.method == 'POST':
-        post_body = json.loads(request.body)
-        user = Profile.objects.filter(user__username=post_body['username'])
-        if user.count() == 0:
-            password = post_body['password']
-            username = post_body['username']
-            interests = post_body['interest']
-            user = User.objects.create_user(username=username, password=password)
-            profile = Profile.objects.create(user=user)
-            for interest in interests:
-                theme = Theme.objects.get(name=interest)
-                profile.theme.add(theme)
-
-            avator = open("../test_file/img/boy.jpg", "rb")
-            profile.avator.save('boy.jpg', File(avator), save=True)
-            return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
-        else:
-            return HttpResponse(json.dumps("The username has been used"),
-                                status=400,
-                                content_type="application/json"
-                                )
-
-def login_submit(request):
-    if request.method == 'POST':
-        post_body = json.loads(request.body)
-        username = post_body['username']
+@require_POST
+def post_register(request):
+    post_body = json.loads(request.body)
+    user = Profile.objects.filter(user__username=post_body['username'])
+    if user.count() == 0:
         password = post_body['password']
-        try:
-            user = authenticate(username=username, password=password)
-        except User.DoesNotExist:
-            return HttpResponse(status=400)
-        if user:
-            payload = {
-                'id': user.id,
-                'name': user.username,
-            }
-            return HttpResponse(jwt.encode(payload, "Temage"),
-                                status=200,
-                                content_type="application/json"
-                                )
+        username = post_body['username']
+        interests = post_body['interest']
+        user = User.objects.create_user(username=username, password=password)
+        profile = Profile.objects.create(user=user)
+        for interest in interests:
+            theme = Theme.objects.get(name=interest)
+            profile.theme.add(theme)
 
-def JWTauthenticate(request):
-    if request.method == 'POST':
-        post_body = json.loads(request.body)
-        payload = jwt.decode(post_body['token'], "Temage")
-        try:
-            user = User.objects.get(id=payload['id'])
-        except:
-            return HttpResponse(status=400)
-        else:
-            return HttpResponse(
-                json.dumps({"username":user.username}),
-                status=200,
-                content_type="application/json"
-                )
+        avator = open("../test_file/img/boy.jpg", "rb")
+        profile.avator.save('boy.jpg', File(avator), save=True)
+        return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
+    else:
+        return HttpResponse(json.dumps("The username has been used"),
+                            status=400,
+                            content_type="application/json"
+                            )
+@require_POST
+def post_login_submit(request):
+    post_body = json.loads(request.body)
+    username = post_body['username']
+    password = post_body['password']
+    try:
+        user = authenticate(username=username, password=password)
+    except User.DoesNotExist:
+        return HttpResponse(status=400)
+    if user:
+        payload = {
+            'id': user.id,
+            'name': user.username,
+        }
+        return HttpResponse(jwt.encode(payload, "Temage"),
+                            status=200,
+                            content_type="application/json"
+                            )
+@require_POST
+def post_jwt_authenticate(request):
+    post_body = json.loads(request.body)
+    payload = jwt.decode(post_body['token'], "Temage")
+    try:
+        user = User.objects.get(id=payload['id'])
+    except:
+        return HttpResponse(status=400)
+    else:
+        return HttpResponse(
+            json.dumps({"username":user.username}),
+            status=200,
+            content_type="application/json"
+            )
 
 
 
 ####################################################################
 # Interfaces for get data from database and send theme to front-end
 ####################################################################
-
-def gallery_data(request):
+@require_GET
+def get_gallery_data(request):
     """
     This is function that gets data for the work space.
     Parameters:
@@ -160,7 +161,8 @@ def gallery_data(request):
         cards_info.append(card_info)
     return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
-def gallery_more_cards(request):
+@require_GET
+def get_gallery_more_cards(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -182,6 +184,7 @@ def gallery_more_cards(request):
         cards_info.append(card_info)
     return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
+@require_POST
 def post_search(request):
     keywords = json.loads(request.body)['keywords']
     data = {"size": 10, "query": { "bool":{  "should":[{"terms":{"style":keywords.split()}},{"match":{"title": keywords}}]} }}
@@ -208,8 +211,8 @@ def post_search(request):
         cards_info.append(card_info)
     return HttpResponse(json.dumps({"cards":cards_info}), content_type="application/json")
     
-
-def collection_data(request):
+@require_GET
+def get_collection_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -231,7 +234,8 @@ def collection_data(request):
         cards_info.append(card_info)
     return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
-def recent_data(request):
+@require_GET
+def get_recent_data(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -246,89 +250,87 @@ def recent_data(request):
         reclist.append(picinfo)
     return HttpResponse(json.dumps(reclist), content_type="application/json")
 
-def text(request):
-    if request.method == 'POST':
-        token = request.META.get("HTTP_AUTHORIZATION")
-        payload = jwt.decode(token, "Temage")
-        identity = payload['id']
-        product_id = json.loads(request.body)['id']
-        product = Product.objects.get(id=product_id)
-        content = {}
-        userInfo = {}
-        userInfo['username'] = product.creator.user.username
-        userInfo['id'] = product.creator.user.id
-        userInfo['avator'] = str(product.creator.avator)
-        if product.creator.user.id == identity:
-            content['can_be_delete'] = 1
-        else:
-            content['can_be_delete'] = 0
-        user = Profile.objects.get(user__id=identity)
-        collect = user.collections.get(id=1)
-        been_owned = collect.cards.filter(product_id = product_id)
-        if been_owned:
-            content['has_been_colleted'] = 1
-        else:
-            content['has_been_collected'] = 0
-        content['id'] = product_id
-        content['text'] = product.html
-        content['creator'] = product.creator
-        content['title'] = product.title
-        themes = product.theme.all()
-        themelist = []
-        for theme in themes:
-            themelist.append(theme.name)
-        content['style'] = themelist
-        return HttpResponse(json.dumps(content), content_type="application/json")
+@require_GET
+def get_product(request, product_id):
+    token = request.META.get("HTTP_AUTHORIZATION")
+    payload = jwt.decode(token, "Temage")
+    identity = payload['id']
+    product = Product.objects.get(id=product_id)
+    content = {}
+    userInfo = {}
+    userInfo['username'] = product.creator.user.username
+    userInfo['id'] = product.creator.user.id
+    userInfo['avator'] = str(product.creator.avator)
+    if product.creator.user.id == identity:
+        content['can_be_delete'] = 1
+    else:
+        content['can_be_delete'] = 0
+    user = Profile.objects.get(user__id=identity)
+    collect = user.collections.get(id=1)
+    been_owned = collect.cards.filter(product_id = product_id)
+    if been_owned:
+        content['has_been_colleted'] = 1
+    else:
+        content['has_been_collected'] = 0
+    content['id'] = product_id
+    content['text'] = product.html
+    content['creator'] = product.creator
+    content['title'] = product.title
+    themes = product.theme.all()
+    themelist = []
+    for theme in themes:
+        themelist.append(theme.name)
+    content['style'] = themelist
+    return HttpResponse(json.dumps(content), content_type="application/json")
 
-def collect(request):
-    if request.method == 'POST':
-        token = request.META.get("HTTP_AUTHORIZATION")
-        payload = jwt.decode(token, "Temage")
-        identity = payload['id']
-        post_body = json.loads(request.body)
-        card_id = post_body['id']
-        try:
-            user = Profile.objects.get(user__id=identity)
-            card = Card.objects.get(product__id=card_id)
-            collection = user.collection
-            collection.cards.add(card)
-            return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
-        except:
-            return HttpResponse(json.dumps("failed"), status=400, content_type="application/json")
+@require_POST
+def post_collect(request):
+    token = request.META.get("HTTP_AUTHORIZATION")
+    payload = jwt.decode(token, "Temage")
+    identity = payload['id']
+    post_body = json.loads(request.body)
+    card_id = post_body['id']
+    try:
+        user = Profile.objects.get(user__id=identity)
+        card = Card.objects.get(product__id=card_id)
+        collection = user.collection
+        collection.cards.add(card)
+        return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
+    except:
+        return HttpResponse(json.dumps("failed"), status=400, content_type="application/json")
+
 
 def delete_product(request):
-    if request.method == 'POST':
-        post_body = json.loads(request.body)
-        work_id = post_body['workID']
-        try:
-            product = Product.objects.get(id = work_id)
-            product.delete()
-            # ES delete start
-            # response = requests.post(settings.ES_DELETE_URL, data=json.loads({"query":{"match":{"ID": work_id}}}), headers={"content-type":"application/json"})
-            # if response.status_code != 200:
-            #     raise RuntimeError('Index has not been deleted!')
-            # ES delete end
-            return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
-        except:
-            return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
-
+    post_body = json.loads(request.body)
+    work_id = post_body['workID']
+    try:
+        product = Product.objects.get(id = work_id)
+        product.delete()
+        # ES delete start
+        # response = requests.post(settings.ES_DELETE_URL, data=json.loads({"query":{"match":{"ID": work_id}}}), headers={"content-type":"application/json"})
+        # if response.status_code != 200:
+        #     raise RuntimeError('Index has not been deleted!')
+        # ES delete end
+        return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
+    except:
+        return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
+@require_POST
 def cancel_collect(request):
-    if request.method == 'POST':
-        token = request.META.get("HTTP_AUTHORIZATION")
-        payload = jwt.decode(token, "Temage")
-        identity = payload['id']
+    token = request.META.get("HTTP_AUTHORIZATION")
+    payload = jwt.decode(token, "Temage")
+    identity = payload['id']
 
-        user = Profile.objects.get(user__id=identity)
+    user = Profile.objects.get(user__id=identity)
 
-        post_body = json.loads(request.body)
-        work_id = post_body['id']
-        try:
-            card = Card.objects.get(product__id=work_id)
-            collection = user.collection
-            if (collection.cards.filter(product__id=work_id).count() == 0):
-                return HttpResponse(json.dumps("This work has already been removed!"), status = 402, content_type = "application/json")
-            else:
-                card.collections.remove(collection)
-                return HttpResponse(json.dumps("Succeed"), status=200, content_type = "application/json")
-        except:
-            return HttpResponse(json.dumps("Something wrong"), status = 400, content_type="application/json")
+    post_body = json.loads(request.body)
+    work_id = post_body['id']
+    try:
+        card = Card.objects.get(product__id=work_id)
+        collection = user.collection
+        if (collection.cards.filter(product__id=work_id).count() == 0):
+            return HttpResponse(json.dumps("This work has already been removed!"), status = 402, content_type = "application/json")
+        else:
+            card.collections.remove(collection)
+            return HttpResponse(json.dumps("Succeed"), status=200, content_type = "application/json")
+    except:
+        return HttpResponse(json.dumps("Something wrong"), status = 400, content_type="application/json")
