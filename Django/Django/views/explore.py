@@ -1,18 +1,34 @@
 from django.shortcuts import render
-from Temage.models import *
+
+from Temage.models import User
+from Temage.models import Profile
+from Temage.models import Product
+from Temage.models import Card
+from Temage.models import Style
+from Temage.models import Collection
+from Temage.models import Theme
+
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, JsonResponse
-from django.core import serializers
-from django.contrib.auth import authenticate, login
-from django.core.files.base import ContentFile
-from django.conf import settings
-from django.core.files import File
+
+from django.http import HttpResponse
+from django.http import JsonResponse
+
 from django.views.decorators.http import require_GET, require_POST
 
-import jwt
+from django.contrib.auth import authenticate
+from django.contrib.auth import login
+
+from django.core import serializers
+from django.core.files.base import ContentFile
+from django.core.files import File
+
+from django.conf import settings
+
 import json
+import jwt
 import random
 import requests
+from xhtml2pdf import pisa
 
 ####################################################################
 # Interfaces for register and login, and also identity authenticate
@@ -20,7 +36,7 @@ import requests
 @require_GET
 def get_homepage_data(request):
     """
-    This is function that gets data for the homepage.
+    Gets data for the homepage.
     Parameters:
         request - this is a request to data from the front-end.
     Returns:
@@ -70,6 +86,13 @@ def get_homepage_data(request):
 
 @require_POST
 def post_register(request):
+    """
+    Sign up an account.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of the result.
+    """
     post_body = json.loads(request.body)
     user = Profile.objects.filter(user__username=post_body['username'])
     if user.count() == 0:
@@ -92,6 +115,13 @@ def post_register(request):
                             )
 @require_POST
 def post_login_submit(request):
+    """
+    Sign up an account.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of the result.
+    """
     post_body = json.loads(request.body)
     username = post_body['username']
     password = post_body['password']
@@ -110,6 +140,13 @@ def post_login_submit(request):
                             )
 @require_POST
 def post_jwt_authenticate(request):
+    """
+    Tests and verifies the current user's identification.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of the result.
+    """
     post_body = json.loads(request.body)
     payload = jwt.decode(post_body['token'], "Temage")
     try:
@@ -131,11 +168,11 @@ def post_jwt_authenticate(request):
 @require_GET
 def get_gallery_data(request):
     """
-    This is function that gets data for the work space.
+    Gets data for the gallery.
     Parameters:
         request - this is a request to data from the front-end.
     Returns:
-        required homepage data in json-string form.
+        required gallery data in json-string form.
     """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
@@ -163,6 +200,13 @@ def get_gallery_data(request):
 
 @require_GET
 def get_gallery_more_cards(request):
+    """
+    Gets data for the gallery's next page.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required another gallery data in json-string form.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -186,6 +230,13 @@ def get_gallery_more_cards(request):
 
 @require_POST
 def post_search(request):
+    """
+    Gets data for global search.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required data in json-string form.
+    """
     keywords = json.loads(request.body)['keywords']
     data = {"size": 10, "query": { "bool":{  "should":[{"terms":{"style":keywords.split()}},{"match":{"title": keywords}}]} }}
     response = requests.post(settings.ES_SEARCH_URL, data=json.dumps(data), headers={'Content-Type': 'application/json'})
@@ -213,6 +264,13 @@ def post_search(request):
     
 @require_GET
 def get_collection_data(request):
+    """
+    Gets informations of user's collection.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required gallery data in json-string form.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -236,6 +294,13 @@ def get_collection_data(request):
 
 @require_GET
 def get_recent_data(request):
+    """
+    Gets informations of user's recent modified works.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required recent work data in json-string form.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -251,10 +316,18 @@ def get_recent_data(request):
     return HttpResponse(json.dumps(reclist), content_type="application/json")
 
 @require_GET
-def get_product(request, product_id):
+def get_product(request):
+    """
+    Gets detailed information of product.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required detailed work data in json-string form.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
+    product_id = json.loads(request.body)['productID']
     product = Product.objects.get(id=product_id)
     content = {}
     userInfo = {}
@@ -266,7 +339,7 @@ def get_product(request, product_id):
     else:
         content['can_be_delete'] = 0
     user = Profile.objects.get(user__id=identity)
-    collect = user.collections.get(id=1)
+    collect = user.collection
     been_owned = collect.cards.filter(product_id = product_id)
     if been_owned:
         content['has_been_colleted'] = 1
@@ -285,11 +358,18 @@ def get_product(request, product_id):
 
 @require_POST
 def post_collect(request):
+    """
+    Collects the work that the user interested in into his collection.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of this action.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
     post_body = json.loads(request.body)
-    card_id = post_body['id']
+    card_id = post_body['cardID']
     try:
         user = Profile.objects.get(user__id=identity)
         card = Card.objects.get(product__id=card_id)
@@ -301,21 +381,36 @@ def post_collect(request):
 
 
 def delete_product(request):
+    """
+    Deletes the product completely from the database.
+    Parameters:
+        request - this is a request to data from the front-end. 
+    Returns:
+        status code of this action.
+    """
     post_body = json.loads(request.body)
-    work_id = post_body['workID']
+    product_id = post_body['productID']
     try:
-        product = Product.objects.get(id = work_id)
+        product = Product.objects.get(id = product_id)
         product.delete()
         # ES delete start
-        # response = requests.post(settings.ES_DELETE_URL, data=json.loads({"query":{"match":{"ID": work_id}}}), headers={"content-type":"application/json"})
+        # response = requests.post(settings.ES_DELETE_URL, data=json.loads({"query":{"match":{"ID": product_id}}}), headers={"content-type":"application/json"})
         # if response.status_code != 200:
         #     raise RuntimeError('Index has not been deleted!')
         # ES delete end
         return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
     except:
         return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
+
 @require_POST
 def cancel_collect(request):
+    """
+    Removed the card from user's collection
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of this action.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -323,12 +418,12 @@ def cancel_collect(request):
     user = Profile.objects.get(user__id=identity)
 
     post_body = json.loads(request.body)
-    work_id = post_body['id']
+    product_id = post_body['productID']
     try:
-        card = Card.objects.get(product__id=work_id)
+        card = Card.objects.get(product__id=product_id)
         collection = user.collection
-        if (collection.cards.filter(product__id=work_id).count() == 0):
-            return HttpResponse(json.dumps("This work has already been removed!"), status = 402, content_type = "application/json")
+        if (collection.cards.filter(product__id=product_id).count() == 0):
+            return HttpResponse(json.dumps("This product has already been removed!"), status = 402, content_type = "application/json")
         else:
             card.collections.remove(collection)
             return HttpResponse(json.dumps("Succeed"), status=200, content_type = "application/json")

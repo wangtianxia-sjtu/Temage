@@ -20,47 +20,46 @@ from  .views import *
 from django.urls import path
 from django.urls import include
 
-from Temage import views
 from django.conf.urls import url
 
 
 explore_patterns = [
-    path(r'', explore.get_homepage_data),
-    path(r'gallery/', explore.get_gallery_data),
-    path(r'gallery/more_cards/', explore.get_gallery_more_cards),
-    path(r'collection/', explore.get_collection_data),
-    path(r'recent/', explore.get_recent_data),
-    path(r'product/<int:product_id>', explore.get_product),
-    path(r'post_collect/', explore.post_collect),
-    path(r'delete/', explore.delete_product),
-    path(r'cancel_collect/', explore.cancel_collect),
-    path(r'post_search/', explore.post_search)
+    path('', explore.get_homepage_data),
+    path('gallery/', explore.get_gallery_data),
+    path('gallery/more_cards/', explore.get_gallery_more_cards),
+    path('collection/', explore.get_collection_data),
+    path('get_recent/', explore.get_recent_data),
+    path('product/', explore.get_product),
+    path('post_collect/', explore.post_collect),
+    path('delete/', explore.delete_product),
+    path('cancel_collect/', explore.cancel_collect),
+    path('post_search/', explore.post_search)
 ]
 
 
 
 workflow_patterns = [
-    path(r'post_picture/', workflow.post_picture),
-    path(r'text_post/', workflow.post_text),
-    path(r'confirm_style/', workflow.post_confirmed_style),
-    path(r'store_passage/', workflow.store_passage),
-    path(r'finished_work/', workflow.finished_work),
-    path(r'confirm_store/', workflow.confirm_store),
-    path(r'download/', workflow.download)
+    path('post_picture/', workflow.post_picture),
+    path('post_text/', workflow.post_text),
+    path('confirm_style/', workflow.post_confirmed_style),
+    path('store_passage/', workflow.store_passage),
+    path('finished_work/', workflow.finished_work),
+    path('confirm_store/', workflow.confirm_store),
+    path('download_picture/', workflow.download)
 ]
 
 user_patterns = [
-    path(r'register/', explore.post_register),
-    path(r'login/submit/', explore.post_login_submit),
-    path(r'authenticate/', explore.post_jwt_authenticate),
+    path('register/', explore.post_register),
+    path('login/', explore.post_login_submit),
+    path('authenticate/', explore.post_jwt_authenticate),
 ]
 
 
 
 api_patterns = [
     path('workflow/', include(workflow_patterns)),
-    path(r'explore/', include(explore_patterns)),
-    path(r'user/', include(user_patterns))
+    path('explore/', include(explore_patterns)),
+    path('user/', include(user_patterns))
 ]
 
 

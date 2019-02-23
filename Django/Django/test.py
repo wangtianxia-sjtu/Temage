@@ -27,7 +27,7 @@ class ModelTest(TestCase):
         avator1 = open("../test_file/img/girl.jpg", "rb")
         avator2 = open("../test_file/img/boy.jpg", "rb")
         User.objects.create_user(id=1,username=1234, is_superuser=True, email='1234@qq.com', password="1234")
-        user1 = User.objects.create_user(username="qxy", password="123", id=2)
+        user1 = User.objects.create_user(username="qxy", password="123")
         user2 = User.objects.create_user(username="wxm", password="123")
         style1 = Style.objects.create(name="style_1")
         style2 = Style.objects.create(name="style_2")
@@ -49,12 +49,12 @@ class ModelTest(TestCase):
         style18 = Style.objects.create(name="style_j")
         style19 = Style.objects.create(name="style_k")
         style20 = Style.objects.create(name="style_l")
-        theme1 = Theme.objects.create(name="Sports", id=1)
-        theme2 = Theme.objects.create(name="Art", id=2)
-        theme3 = Theme.objects.create(name="Tech", id=3)
-        theme4 = Theme.objects.create(name="Movie", id=4)                      
-        theme5 = Theme.objects.create(name="Porn", id=5)
-        theme6 = Theme.objects.create(name="Celebrity", id=6)
+        theme1 = Theme.objects.create(name="Sports")
+        theme2 = Theme.objects.create(name="Art")
+        theme3 = Theme.objects.create(name="Tech")
+        theme4 = Theme.objects.create(name="Movie")                      
+        theme5 = Theme.objects.create(name="Porn")
+        theme6 = Theme.objects.create(name="Celebrity")
         profile1 = Profile.objects.create(user = user1)
         profile2 = Profile.objects.create(user = user2)
         profile1.avator.save('girl.jpg', File(avator1), save=True)
@@ -160,12 +160,12 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: Succeed
 #  测试经验总结: 无
     def test_login(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
 #  用例编号: 103
-#  测试单元描述: 测试api接口
-#  用例目的: 测试给前端/api返回的数据是否符合规范
+#  测试单元描述: 测试/api/explore/接口
+#  用例目的: 测试给前端/api/explore/返回的数据是否符合规范
 #  前提条件: 通过数据库操作创建相应的对象们
 #  特殊的规程说明: 用户需要先登录才能获取这些信息
 #  用例间的依赖关系: 无
@@ -184,7 +184,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_api(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/explore/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -214,18 +214,18 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_work(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/work/11/', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/explore/product/', {'productID': 11}, HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 3)
 
 #  用例编号: 105
 #  测试单元描述: 测试api接口
-#  用例目的: 测试给前端/api/collection返回的数据是否符合规范
+#  用例目的: 测试给前端/api/explore/collection返回的数据是否符合规范
 #  前提条件: 通过数据库操作创建相应的对象们
 #  特殊的规程说明: 用户需要先登录才能获取这些信息
 #  用例间的依赖关系: 无
@@ -244,18 +244,18 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_collection(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/collection/', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/explore/collection/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList[0]), 6)
 
 #  用例编号: 106
-#  测试单元描述: 测试api/recent接口
-#  用例目的: 测试给前端/api/recent返回的数据是否符合规范
+#  测试单元描述: 测试/api/explore/get_recent/接口
+#  用例目的: 测试给前端/api/explore/get_recent/返回的数据是否符合规范
 #  前提条件: 通过数据库操作创建相应的对象们
 #  特殊的规程说明: 用户需要先登录才能获取这些信息
 #  用例间的依赖关系: 无
@@ -274,18 +274,18 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_recent(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/recent/', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/explore/get_recent/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 4)
 
 
 #  用例编号: 107
-#  测试单元描述: 测试register接口
+#  测试单元描述: 测试/api/user/register/接口
 #  用例目的: 测试用户注册功能
 #  前提条件: 通过数据库操作创建相应的对象们
 #  特殊的规程说明: 无
@@ -300,12 +300,12 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_register(self):
-        response = self.client.post('/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Porn','Sports'],'desc': 'love and peace'}, content_type="application/json")
+        response = self.client.post('/api/user/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Porn','Sports'],'desc': 'love and peace'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
 #  用例编号: 108
-#  测试单元描述: 测试/api/gallery接口
-#  用例目的: 测试/api/gallery返回的数据是否符合规范
+#  测试单元描述: 测试/api/explore/gallery/接口
+#  用例目的: 测试/api/explore/gallery/返回的数据是否符合规范
 #  前提条件: 通过数据库操作创建相应的对象们
 #  特殊的规程说明: 需登陆后操作
 #  用例间的依赖关系: 无
@@ -324,17 +324,17 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_gallery(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/gallery/', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/explore/gallery/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 7)
 
 #  用例编号: 109
-#  测试单元描述: 测试/api/gallery/more_cards接口
+#  测试单元描述: 测试/api/explore/gallery/more_cards接口
 #  用例目的: 测试/api/gallery/more_cards返回的数据是否符合规范
 #  前提条件: 通过数据库操作创建相应的对象们
 #  特殊的规程说明: 需登陆后操作
@@ -354,18 +354,18 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_gallery_more_card(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.get('/api/gallery/more_cards/', HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.get('/api/explore/gallery/more_cards/', HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(len(responseList), 4)
 
 #  用例编号: 110
-#  测试单元描述: 测试/api/text接口
-#  用例目的: 测试/api/text返回的数据是否符合规范
+#  测试单元描述: 测试/api/explore/product接口
+#  用例目的: 测试/api/explore/product返回的数据是否符合规范
 #  前提条件: 通过数据库操作创建相应的对象们
 #  特殊的规程说明: 需登陆后操作
 #  用例间的依赖关系: 无
@@ -384,12 +384,12 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_text(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/text/', {'id' : '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/explore/product/', {'id' : '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         self.assertEqual(responseList['id'], '18')
         # print("testtext")
@@ -397,76 +397,76 @@ class ModelTest(TestCase):
 
 
     def test_store_passage(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/store_passage/', {'styles' : ['Porn','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/workflow/store_passage/', {'styles' : ['Porn','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         # print(responseList)
 
     def test_finished_work(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/finished_work/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/workflow/finished_work/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         # print("testFinished")
         # print(responseList)
 
     def test_download(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/download/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/download/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         # print(responseList)
 
     def test_confirm_store(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/confirm_store/', {'workID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/explore/confirm_store/', {'ProdcutID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         # print(responseList)
 
     def test_delete(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/delete/', {'workID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/explore/delete/', {'ProductID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         # print(responseList)
 
     def testCollect(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/explore/post_collect/', {'cardID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         # print(responseList)
 
     def testCancelCollect(self):
-        response = self.client.post('/login/submit/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/cancel_collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/explore/cancel_collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
-        self.client.post('/api/collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
-        responseAPI = self.client.post('/api/cancel_collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        self.client.post('/api/explore/post_collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/explore/cancel_collect/', {'id': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
         print(responseList)
