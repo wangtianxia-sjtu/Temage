@@ -88,7 +88,7 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0;",
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0,storage_engine = MyISAM;",
             'charset': 'utf8mb4',
         },
         'TEST_CHARSET': 'utf-8',
