@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 from django.http import JsonResponse
 import jwt
 from Temage.models import User

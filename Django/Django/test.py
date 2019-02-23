@@ -1,4 +1,4 @@
-#coding=utf-8
+#-*-coding:utf-8-*-
 from django.test import TestCase
 from Temage.models import User
 from Temage.models import Profile

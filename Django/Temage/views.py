@@ -1,4 +1,7 @@
+#-*-coding:utf-8-*-
+
 from django.shortcuts import render
+
 from Temage.models import User
 from Temage.models import Profile
 from Temage.models import Product
@@ -6,14 +9,22 @@ from Temage.models import Card
 from Temage.models import Style
 from Temage.models import Collection
 from Temage.models import Theme
+
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, JsonResponse
+
+from django.http import HttpResponse
+from django.http import JsonResponse
+
+from django.contrib.auth import authenticate
+from django.contrib.auth import login
+
 from django.core import serializers
-import json
-from django.contrib.auth import authenticate, login
 from django.core.files.base import ContentFile
-from django.conf import settings
 from django.core.files import File
+
+from django.conf import settings
+
+import json
 import jwt
 import random
 import requests
@@ -29,7 +40,7 @@ result_html = '<!DOCTYPE html><html><head>    <meta http-equiv="Content-Type" co
 
 def homepage_data(request):
     """
-    This is function that gets data for the homepage.
+    Gets data for the homepage.
     Parameters:
         request - this is a request to data from the front-end.
     Returns:
@@ -79,11 +90,12 @@ def homepage_data(request):
 
 def work_data(request, work_id):
     """
-    This is function that gets data for the work space.
+    Gets data for the work space.
     Parameters:
-        work_id - this is a request to data from the front-end.
+        request - this is a request to data from the front-end.
+        work_id - this is the id of the product that the front-end needed.
     Returns:
-        required homepage data in json-string form.
+        required work data in json-string form.
     """
     # guess data here
     work = Product.objects.get(id=work_id).html
@@ -96,11 +108,11 @@ def work_data(request, work_id):
 
 def gallery_data(request):
     """
-    This is function that gets data for the work space.
+    Gets data for the gallery.
     Parameters:
         request - this is a request to data from the front-end.
     Returns:
-        required homepage data in json-string form.
+        required gallery data in json-string form.
     """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
@@ -127,6 +139,13 @@ def gallery_data(request):
     return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
 def gallery_more_cards(request):
+    """
+    Gets data for the gallery's next page.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required another gallery data in json-string form.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -149,6 +168,13 @@ def gallery_more_cards(request):
     return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
 def post_search(request):
+    """
+    Gets data for global search.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required data in json-string form.
+    """
     keywords = json.loads(request.body)['keywords']
     data = {"size": 10, "query": { "bool":{  "should":[{"terms":{"style":keywords.split()}},{"match":{"title": keywords}}]} }}
     response = requests.post(settings.ES_SEARCH_URL, data=json.dumps(data), headers={'Content-Type': 'application/json'})
@@ -176,6 +202,13 @@ def post_search(request):
     
 
 def collection_data(request):
+    """
+    Gets informations of user's collection.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required gallery data in json-string form.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -198,6 +231,13 @@ def collection_data(request):
     return HttpResponse(json.dumps(cards_info), content_type="application/json")
 
 def recent_data(request):
+    """
+    Gets informations of user's recent modified works.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required recent work data in json-string form.
+    """
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
@@ -213,6 +253,13 @@ def recent_data(request):
     return HttpResponse(json.dumps(reclist), content_type="application/json")
 
 def text(request):
+    """
+    Gets detailed information of work.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        required detailed work data in json-string form.
+    """
     if request.method == 'POST':
         token = request.META.get("HTTP_AUTHORIZATION")
         payload = jwt.decode(token, "Temage")
@@ -247,6 +294,13 @@ def text(request):
         return HttpResponse(json.dumps(content), content_type="application/json")
 
 def collect(request):
+    """
+    Collects the work that the user interested in into his collection.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of this action.
+    """
     if request.method == 'POST':
         token = request.META.get("HTTP_AUTHORIZATION")
         payload = jwt.decode(token, "Temage")
@@ -263,6 +317,13 @@ def collect(request):
             return HttpResponse(json.dumps("failed"), status=400, content_type="application/json")
 
 def delete_product(request):
+    """
+    Deletes the product completely from the database.
+    Parameters:
+        request - this is a request to data from the front-end. 
+    Returns:
+        status code of this action.
+    """
     if request.method == 'POST':
         post_body = json.loads(request.body)
         work_id = post_body['workID']
@@ -279,6 +340,13 @@ def delete_product(request):
             return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
 
 def cancel_collect(request):
+    """
+    Removed the card from user's collection
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of this action.
+    """
     if request.method == 'POST':
         token = request.META.get("HTTP_AUTHORIZATION")
         payload = jwt.decode(token, "Temage")
@@ -304,6 +372,13 @@ def cancel_collect(request):
 ####################################################################
 
 def login_submit(request):
+    """
+    Sign in a account.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of this action.
+    """
     if request.method == 'POST':
         post_body = json.loads(request.body)
         username = post_body['username']
@@ -323,6 +398,13 @@ def login_submit(request):
                                 )
 
 def JWTauthenticate(request):
+    """
+    Tests and verifies the current user's identification.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of the result.
+    """
     if request.method == 'POST':
         post_body = json.loads(request.body)
         payload = jwt.decode(post_body['token'], "Temage")
@@ -338,6 +420,13 @@ def JWTauthenticate(request):
                 )
 
 def register(request):
+    """
+    Sign up an account.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of the result.
+    """
     if request.method == 'POST':
         post_body = json.loads(request.body)
         user = Profile.objects.filter(user__username=post_body['username'])
@@ -365,25 +454,47 @@ def register(request):
 ##########################
 def pic_post(request): # 需完善
     """
-    Get pictures from users, and send them to the models.
+    Posts pictures to the model that inserts pictures into the text.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+       status code of this action.
     """
     
     return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
 
 def text_post(request): # 需完善
     """
-    Get text content from users, and send it with the pictures
+    Posts text to the model that inserts pictures into the text.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of this action.
     """
 
     return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
 
 def ret_html(request): # 需完善
+    """
+    Returns the result html string from the models that generate the initial typesetting.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        the result html from the models.
+    """
     # 会有styles需要接收
     content = {}
     content['html'] = result_html
     return HttpResponse(json.dumps(content), content_type="application/json")
 
 def store_passage(request):
+    """
+    Store the work information initially. 
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of this action.
+    """
     if request.method == 'POST':
         # token = request.META.get("HTTP_AUTHORIZATION")
         # payload = jwt.decode(token, "Temage")
@@ -424,6 +535,14 @@ def store_passage(request):
         return HttpResponse(json.dumps(content), status = 200, content_type = "application/json")
 
 def finished_work(request):
+    """
+    Previews the work after user's modifying.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        the url of html file generated finally.
+        the width of this work.
+    """
     if request.method == 'POST':
         post_body = json.loads(request.body)
         work_id = post_body['workID']
@@ -436,6 +555,13 @@ def finished_work(request):
         return HttpResponse(json.dumps(content), content_type = "application/json")
 
 def download(request):
+    """
+    Download the image generated from the html file.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        the url of the image.
+    """
     if request.method == 'POST':
         post_body = json.loads(request.body)
         work_id = post_body['workID']
@@ -449,6 +575,13 @@ def download(request):
     return HttpResponse(json.dumps(""), content_type = "application/json")
 
 def confirm_store(request):
+    """
+    Stores the work finally.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+        status code of this action.
+    """
     if request.method == 'POST':
         post_body = json.loads(request.body)
         work_id = post_body['workID']

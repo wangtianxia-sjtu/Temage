@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 """Django URL Configuration
 
 The `urlpatterns` list routes URLs to  For more information please see:
@@ -14,8 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
 from  .views import *
+
+from django.urls import path
+from django.urls import include
+
+from Temage import views
 from django.conf.urls import url
 
 
