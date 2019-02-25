@@ -17,6 +17,6 @@ class Command(BaseCommand):
             cursor.execute('create database temage')
 
         except:
-            raise CommandError("The seed command has something wrong.")
+            raise CommandError("The droptablesCI command has something wrong.")
         else:
             self.stdout.write('Successfully init the database')
