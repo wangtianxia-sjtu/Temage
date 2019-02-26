@@ -28,7 +28,6 @@ import json
 import jwt
 import random
 import requests
-from xhtml2pdf import pisa
 
 ####################################################################
 # Interfaces for register and login, and also identity authenticate
@@ -315,7 +314,7 @@ def get_recent_data(request):
         reclist.append(picinfo)
     return HttpResponse(json.dumps(reclist), content_type="application/json")
 
-@require_GET
+@require_POST
 def get_product(request):
     """
     Gets detailed information of product.
@@ -330,10 +329,10 @@ def get_product(request):
     product_id = json.loads(request.body)['productID']
     product = Product.objects.get(id=product_id)
     content = {}
-    userInfo = {}
-    userInfo['username'] = product.creator.user.username
-    userInfo['id'] = product.creator.user.id
-    userInfo['avator'] = str(product.creator.avator)
+    user_info = {}
+    user_info['username'] = product.creator.user.username
+    user_info['id'] = product.creator.user.id
+    user_info['avator'] = str(product.creator.avator)
     if product.creator.user.id == identity:
         content['can_be_delete'] = 1
     else:
@@ -347,7 +346,7 @@ def get_product(request):
         content['has_been_collected'] = 0
     content['id'] = product_id
     content['text'] = product.html
-    content['creator'] = product.creator
+    content['creator'] = user_info
     content['title'] = product.title
     themes = product.theme.all()
     themelist = []
@@ -369,10 +368,10 @@ def post_collect(request):
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
     post_body = json.loads(request.body)
-    card_id = post_body['cardID']
+    product_id = post_body['productID']
     try:
         user = Profile.objects.get(user__id=identity)
-        card = Card.objects.get(product__id=card_id)
+        card = Card.objects.get(product__id=product_id)
         collection = user.collection
         collection.cards.add(card)
         return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")

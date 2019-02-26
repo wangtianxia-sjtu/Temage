@@ -21,7 +21,7 @@ class Theme(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     owner = models.ManyToManyField(CommonThemes, related_name='theme')
-    styles = models.ManyToManyField(Style)
+    styles = models.ManyToManyField(Style, related_name='themes')
 
     def __str__(self):
         return (self.id)
@@ -40,18 +40,19 @@ class Profile(CommonThemes):
 
 class Product(CommonThemes):
     title = models.CharField(max_length=255)
-    image_src = models.ImageField(null=True, upload_to='img/pimg')
+    image_src = models.ImageField(upload_to='img/pimg')
     html = models.TextField(blank=True)
     #path = models.CharField(max_length=255)
     vector = models.TextField(blank=True)
     score = models.FloatField(null=True)
     creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='products')
-    style = models.ForeignKey(Style, null=True, on_delete=models.DO_NOTHING, related_name='products')
+    style = models.ForeignKey(Style, on_delete=models.DO_NOTHING, related_name='products')
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     is_finished = models.BooleanField(default=0)
-    width = models.IntegerField(null=True)
+    width = models.IntegerField()
     html_file = models.FileField(upload_to='html')
+    pdf_file = models.FileField(upload_to='pdf')
 
     class Meta:
         ordering = ['-update_time']
