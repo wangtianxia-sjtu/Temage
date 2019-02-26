@@ -411,7 +411,7 @@ class ModelTest(TestCase):
 # 		  实际输出: id为2
 # 		  备注: 根据setup的改动，id可能有所变动
 #     步骤2
-#         输入: 带有步骤1中token的request
+#         输入: 带有步骤1中token的request，和当前处理的product的id
 # 		  期望输出: 返回作品的html文件路径，和生成图片的宽度
 # 		  实际输出: 作品html的url和宽度width=400
 # 		  备注:
@@ -442,7 +442,7 @@ class ModelTest(TestCase):
 # 		  实际输出: id为2
 # 		  备注: 根据setup的改动，id可能有所变动
 #     步骤2
-#         输入: 带有步骤1中token的request
+#         输入: 带有步骤1中token的request，和需要下载的product的id
 # 		  期望输出: 返回下载地址
 # 		  实际输出: 返回下载地址
 # 		  备注:
