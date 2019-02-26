@@ -12,7 +12,12 @@ import copy
 import json
 import time
 from keras.models import load_model
+from keras.models import Model
+from keras.optimizers import SGD
+from keras import layers
 from keras.preprocessing.image import load_img, img_to_array
+import os
+from keras import backend as K
 
 class ImageMatchHandler(RequestHandler):
     executor = ThreadPoolExecutor(10)
@@ -25,13 +30,18 @@ class ImageMatchHandler(RequestHandler):
     
     def initialize(self):
         self.sentence_length = 2
+        K.clear_session()
     @gen.coroutine
     def prepare(self):
         self.dimension = 1024
         self.sentence_length = 2
         self.embedding = Embedder('./model/elmo/zhs.model/')
         self.target_size = (224, 224)
-        self.file_path = '' 
+        self.file_path = 'files'
+        model_path = './model/text_image_match/text_image_all.h5'
+        self.model = load_model(model_path)
+        self.compare_dimension = 128 
+        self.sentence_length = 2
 
     @run_on_executor 
     def get_embedding(self, words):
@@ -47,37 +57,44 @@ class ImageMatchHandler(RequestHandler):
             result.append(np.mean(sentence, axis=0).tolist())
         return result
     
-    @run_on_executor 
     def predict(self, image, embedings):
-        model = load_model('./model/text_image/')
+        # lstm branch for dealing with text
         img = load_img(image,target_size=self.target_size)
         img = img_to_array(img)
         img /= 255
-        length = embedings.shape(0)
+        length = embedings.shape[0]
         imgs = []
         for i in range(length):
             imgs.append(img)
-        result = model.predict([np.array(imgs, embedings)])
+        result = self.model.predict([np.array(embedings), np.array(imgs)])
         return result
     
     @asynchronous
     @gen.coroutine
-    def get(self, *args, **kwargs):
-        file_metas = self.request.files.get('file', None)
+    def post(self, *args, **kwargs):
+        file_metas = self.request.files.get('files', None)
         if not file_metas:
             self.write(json.dumps({'msg': 'no files', 'code': 400}))
         else:
-            data = json_decode(self.request.body)
-            text_array = data['text_array']
+            
+            text_array = self.get_body_argument('text_array')
+            print(text_array)
+            text_array = json_decode(text_array)
             sentences_embeddings = yield [self.get_embedding(item) for item in text_array]
-            file_metas = self.request.files.get('file', None)
+            file_metas = self.request.files.get('files', None)
             file_paths = []
             for meta in file_metas:
-                file_path = self.file_path + meta['filename']
+                file_path = os.path.join(self.file_path, meta['filename'])
+                file_path = os.path.abspath(file_path)
+                file_path = file_path.replace('\\', '/')
                 with open(file_path, 'wb') as up:
                     up.write(meta['body'])
                 file_paths.append(file_path)
             sentences_embeddings = np.array(sentences_embeddings).reshape((-1, self.dimension*self.sentence_length, 1))
-            results = yield [self.predict(path, sentences_embeddings) for path in file_paths]
+            results =  [self.predict(path, sentences_embeddings).tolist() for path in file_paths]
+            order = []
+            for i, result in results:
+                order.append(result.index(max(result)))
+            self.write(json.dumps(order))
             
         

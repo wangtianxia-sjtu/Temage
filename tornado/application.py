@@ -13,10 +13,10 @@ class Application(tornado.web.Application):
     def __init__(self):
         # 路由
         handlers = [
-            (r"/", index.IndexHandler),
-            (r"/embedding", embedding.EmbeddingHandler),
-            (r"/image_match", image_match.ImageMatchHandler),
-            (r"/history_predict", history.HistoryHandler)
+            ("/", index.IndexHandler),
+            ("/embedding", embedding.EmbeddingHandler),
+            ("/image_match", image_match.ImageMatchHandler),
+            ("/history_predict", history.HistoryHandler)
         ]
         super(Application, self).__init__(handlers, **config.settings)
         # 加入config里面的settings配置

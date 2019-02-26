@@ -30,8 +30,7 @@
    python manage.py cleanmigration # clean migration files
    python manage.py droptables # clean the db
    python manage.py makemigrations Temage # convert models to migrations
-   python manage.py migrate Temage # migrate into the database
-   python manage.py migrate auth # migrate auth tables into the db
+   python manage.py migrate # migrate into the database
    ```
 
 4. start Django server and Tornado server

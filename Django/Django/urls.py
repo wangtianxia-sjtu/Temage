@@ -45,7 +45,7 @@ workflow_patterns = [
     path('store_passage/', workflow.store_passage),
     path('finished_work/', workflow.finished_work),
     path('confirm_store/', workflow.confirm_store),
-    path('download/', workflow.download)
+    path('download_picture/', workflow.download)
 ]
 
 user_patterns = [
