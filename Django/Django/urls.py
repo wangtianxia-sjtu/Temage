@@ -41,6 +41,7 @@ explore_patterns = [
 workflow_patterns = [
     path('post_picture/', workflow.post_picture),
     path('post_text/', workflow.post_text),
+    path('push_match_event/', workflow.push_match_event),
     path('confirm_style/', workflow.post_confirmed_style),
     path('store_passage/', workflow.store_passage),
     path('finished_work/', workflow.finished_work),

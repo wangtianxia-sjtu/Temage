@@ -7,6 +7,7 @@ from Temage.models import Collection
 from Temage.models import Product
 from Temage.models import Theme
 from Temage.models import Card
+from Temage.models import Cache
 from django.contrib.auth import authenticate
 from django.core.files import File
 import jwt
@@ -50,6 +51,7 @@ class ModelTest(TestCase):
         style5.css.save('test.css', File(css), save=True)
         style6.css.save('test.css', File(css), save=True)
         profile1 = Profile.objects.create(user = user1)
+        cache = Cache.objects.create(user = profile1)
         profile2 = Profile.objects.create(user = user2)
         profile1.avator.save('girl.jpg', File(avator1), save=True)
         profile2.avator.save('boy.jpg', File(avator2), save=True)
@@ -219,7 +221,6 @@ class ModelTest(TestCase):
         responseAPI = self.client.post('/api/explore/product/', {'productID': '11'}, HTTP_AUTHORIZATION=token, content_type="application/json")
         responseList = json.loads(responseAPI.content)
         self.assertEqual(responseList['id'], '11')
-        self
 
 
 #  用例编号: 105
@@ -538,7 +539,7 @@ class ModelTest(TestCase):
 # 		  备注:
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
-    def testCollect(self):
+    def test_collect(self):
         response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -567,7 +568,7 @@ class ModelTest(TestCase):
 # 		  备注:
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
-    def testCancelCollect(self):
+    def test_cancel_collect(self):
         response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
@@ -579,4 +580,129 @@ class ModelTest(TestCase):
         self.client.post('/api/explore/post_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseAPI = self.client.post('/api/explore/cancel_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content)
+        self.assertEqual(responseAPI.status_code, 200)
+
+
+#  用例编号: 117
+#  测试单元描述: 测试/api/explore/cancel_collect/接口
+#  用例目的: 测试/api/explore/cancel_collect/的操作是否成功
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 需登陆后操作
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 登录后response中带有身份象征的token，token解码后id为2
+# 		  实际输出: id为2
+# 		  备注: 根据setup的改动，id可能有所变动
+#     步骤2
+#         输入: 带有步骤1中token的request，还包含需要从收藏夹取消的product的id
+# 		  期望输出: 返回成功状态码200
+# 		  实际输出: “200”
+# 		  备注:
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+    def test_post_search(self):
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        print("待测试")
+
+
+
+#  用例编号: 118
+#  测试单元描述: 测试/api/workflow/post_text/接口
+#  用例目的: 测试/api/workflow/post_text/的操作是否成功
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 需登陆后操作
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 登录后response中带有身份象征的token，token解码后id为2
+# 		  实际输出: id为2
+# 		  备注: 根据setup的改动，id可能有所变动
+#     步骤2
+#         输入: 带有步骤1中token的request，还包含需要从收藏夹取消的product的id
+# 		  期望输出: 返回成功状态码200
+# 		  实际输出: “200”
+# 		  备注:
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+    def test_post_text(self):
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        print("待测试")
+
+
+#  用例编号: 119
+#  测试单元描述: 测试/api/workflow/confirm_style/接口
+#  用例目的: 测试/api/workflow/confirm_style/的操作是否成功
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 需登陆后操作
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 登录后response中带有身份象征的token，token解码后id为2
+# 		  实际输出: id为2
+# 		  备注: 根据setup的改动，id可能有所变动
+#     步骤2
+#         输入: 带有步骤1中token的request，还包含需要从收藏夹取消的product的id
+# 		  期望输出: 返回成功状态码200
+# 		  实际输出: “200”
+# 		  备注:
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+    def test_confirm_style(self):
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        print("待测试")
+
+################################################
+##############    集成测试    ###################
+################################################
+    def test_integrated_explore(self):
+        response = self.client.post('/api/user/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Pony','Sports'],'desc': 'love and peace'}, content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response_login = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        self.assertEqual(response_login.status_code, 200)
+        token = response_login.content
+        response = self.client.get('/api/explore/', HTTP_AUTHORIZATION=token)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/api/explore/gallery/', HTTP_AUTHORIZATION=token)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/api/explore/gallery/more_cards/', HTTP_AUTHORIZATION=token)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/api/explore/collection/', HTTP_AUTHORIZATION=token)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/api/explore/get_recent/', HTTP_AUTHORIZATION=token)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/api/explore/product/', {'productID': '11'}, HTTP_AUTHORIZATION=token, content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/api/explore/post_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/api/explore/cancel_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post('/api/explore/delete/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_integrated_workflow(self):
+        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        token = response.content
+        self.assertEqual(response.status_code, 200)
+        responseAPI = self.client.post('/api/workflow/store_passage/', {'styles' : ['Pony','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        self.assertEqual(responseAPI.status_code, 200)
+        responseAPI = self.client.post('/api/workflow/finished_work/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        self.assertEqual(responseAPI.status_code, 200)
+        responseAPI = self.client.post('/api/workflow/confirm_store/', {'prodcutID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)

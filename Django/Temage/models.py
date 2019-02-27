@@ -92,3 +92,9 @@ class Collection(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+class Cache(models.Model):
+    imgs_urls = models.TextField(blank=True)
+    text = models.TextField(blank=True)
+    user = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='cache')
+    match_list = models.TextField(blank=True)
