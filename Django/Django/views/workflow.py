@@ -49,6 +49,17 @@ def post_picture(request): # 需完善
     """
     
     return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
+@require_GET
+
+def push_match_event(request):
+    """
+    Posts pictures to the model that inserts pictures into the text.
+    Parameters:
+        request - this is a request to data from the front-end.
+    Returns:
+       status code of this action.
+    """
+    return HttpResponse(json.dumps("succed"), status=200, conten_type="application/json")
 
 @require_POST
 def post_text(request):
@@ -181,7 +192,7 @@ def download(request):
     response['Content-Type']='application/octet-stream'
     response['Content-Disposition']='attachment;filename="test.pdf"'
     return response
-    #return HttpResponse(json.dumps(content), content_type="application/json")
+    # return HttpResponse(json.dumps(content), content_type="application/json")
 
 @require_POST
 def confirm_store(request):
