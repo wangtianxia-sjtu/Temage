@@ -73,3 +73,5 @@ media/
 # vscode files
 .vscode/
 docs/~\$mage开发文档\.docx
+*.h5
+*.jpg
