@@ -29,8 +29,8 @@ class ModelTest(TestCase):
         avator2 = open("../test_file/img/boy.jpg", "rb")
         css = open("../test_file/css/test.css", "rb")
         User.objects.create_user(id=1,username=1234, is_superuser=True, email='1234@qq.com', password="1234")
-        user1 = User.objects.create_user(username="qxy", password="123", id=2)
-        user2 = User.objects.create_user(username="wxm", password="123")
+        user1 = User.objects.create_user(username="user1", password="123", id=2)
+        user2 = User.objects.create_user(username="user2", password="123")
         theme1 = Theme.objects.create(name="Sports",id=1)
         theme2 = Theme.objects.create(name="Art",id=2)
         theme3 = Theme.objects.create(name="Tech",id=3)
@@ -133,7 +133,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_polymorphic_manytomany(self):
-        user = Profile.objects.get(user__username='qxy')
+        user = Profile.objects.get(user__username='user1')
         themelist_of_user = user.theme.all().values('name')
         list1 = list(themelist_of_user)
         themelist_of_product = Product.objects.get(id=11).theme.all().values('name')
@@ -144,19 +144,19 @@ class ModelTest(TestCase):
 #  用例编号: 102
 #  测试单元描述: 登录功能测试
 #  用例目的: 测试login登录功能
-#  前提条件: 数据库中已存在username="qxy", password="123"的用户
+#  前提条件: 数据库中已存在username="user1", password="123"的用户
 #  特殊的规程说明: 无
 #  用例间的依赖关系: 无
 #  具体流程:
 #     步骤1
-#         输入: {username:"qxy", password:"123"}
+#         输入: {username:"user1", password:"123"}
 # 		  期望输出: status_code = 200
 # 		  实际输出: "200"
 # 		  备注: 无
 #  测试结果综合分析及建议: Succeed
 #  测试经验总结: 无
     def test_login(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
 
@@ -181,7 +181,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_api_explore(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -213,7 +213,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_product(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -244,7 +244,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_collection(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -275,7 +275,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_recent(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -326,7 +326,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_gallery(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -357,7 +357,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_gallery_more_card(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -388,7 +388,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_store_passage(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -419,7 +419,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_finished_work(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -450,7 +450,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_download(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -481,7 +481,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_confirm_store(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -511,7 +511,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_delete(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -540,7 +540,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_collect(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -569,7 +569,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_cancel_collect(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -603,7 +603,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_post_search(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -632,7 +632,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_post_text(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -660,7 +660,7 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
     def test_confirm_style(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
@@ -673,7 +673,7 @@ class ModelTest(TestCase):
     def test_integrated_explore(self):
         response = self.client.post('/api/user/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Pony','Sports'],'desc': 'love and peace'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
-        response_login = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response_login = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         self.assertEqual(response_login.status_code, 200)
         token = response_login.content
         response = self.client.get('/api/explore/', HTTP_AUTHORIZATION=token)
@@ -697,7 +697,7 @@ class ModelTest(TestCase):
 
 
     def test_integrated_workflow(self):
-        response = self.client.post('/api/user/login/', {'username': 'qxy', 'password': '123'}, content_type="application/json")
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         self.assertEqual(response.status_code, 200)
         responseAPI = self.client.post('/api/workflow/store_passage/', {'styles' : ['Pony','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
