@@ -401,17 +401,17 @@ def post_collect(request):
         collection = user.collection
         collection.cards.add(card)
         # start refresh history
-        # cards = collection.cards[:5]
-        # vectors = []
-        # for card in cards:
-        #     vectors.append(cards.prodcut.vectors)
-        # vector_len = len(cards)
-        # while vector_len != 5:
-        #     vector_len += 1
-        #     vectors.append([0 for i in range(i)])
-        # response = requests.post(settings.SERVERB_HISTORIES_URL, data=json.dumps({"historys": vectors}), headers={"content-type":"application/json"})
-        # user.vector = response.text
-        # user.save()
+        cards = collection.cards[:5]
+        vectors = []
+        for card in cards:
+            vectors.append(cards.prodcut.vectors)
+        vector_len = len(cards)
+        while vector_len != 5:
+            vector_len += 1
+            vectors.append([0 for i in range(i)])
+        response = requests.post(settings.SERVERB_HISTORIES_URL, data=json.dumps({"historys": vectors}), headers={"content-type":"application/json"})
+        user.vector = response.text
+        user.save()
         # end refresh history
         return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
     except:
@@ -432,9 +432,9 @@ def delete_product(request):
         product = Product.objects.get(id = product_id)
         product.delete()
         # ES delete start
-        # response = requests.post(settings.ES_DELETE_URL, data=json.dumps({"query":{"match":{"ID": product_id}}}), headers={"content-type":"application/json"})
-        # if response.status_code != 200:
-        #     raise RuntimeError('Index has not been deleted!')
+        response = requests.post(settings.ES_DELETE_URL, data=json.dumps({"query":{"match":{"ID": product_id}}}), headers={"content-type":"application/json"})
+        if response.status_code != 200:
+            raise RuntimeError('Index has not been deleted!')
         # ES delete end
         return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
     except:
