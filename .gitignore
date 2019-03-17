@@ -75,3 +75,10 @@ media/
 docs/~\$mage开发文档\.docx
 *.h5
 *.jpg
+
+# test coverage
+htmlcov/
+.coverage
+
+# IDEA
+.idea/

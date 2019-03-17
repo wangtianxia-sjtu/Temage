@@ -12,3 +12,4 @@ pyjwt==1.7.1
 django_polymorphic==2.0.3
 sentry-sdk=0.7.2
 xhtml2pdf=0.2.3
+coverage=4.5.3
