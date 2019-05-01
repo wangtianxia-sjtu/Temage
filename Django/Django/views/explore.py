@@ -252,7 +252,28 @@ def post_search(request):
     """
     try:
         keywords = json.loads(request.body)['keywords']
-        data = {"size": 10, "query": { "bool":{  "should":[{"terms":{"style":keywords.split()}},{"match":{"title": keywords}}]} }}
+        data = {
+            "size": 10,
+            "query": {
+                "bool": {
+                    "should": [{
+                            "terms": {
+                                "style": [keywords.split()]
+                            }
+                        },
+                        {
+                            "match": {
+                                "title": {
+                                    "query": keywords,
+                                    "fuzziness": "AUTO",
+                                    "operator": "and"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
         response = requests.post(settings.ES_SEARCH_URL, data=json.dumps(data), headers={'Content-Type': 'application/json'})
         ids = []
         res_data = json.loads(response.text)
@@ -432,7 +453,14 @@ def delete_product(request):
         product = Product.objects.get(id = product_id)
         product.delete()
         # ES delete start
-        response = requests.post(settings.ES_DELETE_URL, data=json.dumps({"query":{"match":{"ID": product_id}}}), headers={"content-type":"application/json"})
+        data = {
+            "query": {
+                "match": {
+                    "ID": product_id
+                }
+            }
+        }
+        response = requests.post(settings.ES_DELETE_URL, data=json.dumps(data), headers={"content-type":"application/json"})
         if response.status_code != 200:
             raise RuntimeError('Index has not been deleted!')
         # ES delete end
