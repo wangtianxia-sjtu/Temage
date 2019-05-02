@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 from django.shortcuts import render
 
 from Temage.models import User
@@ -97,7 +98,7 @@ def post_text(request):
     """
     # identity = jwt.decode(request.META.get("HTTP_AUTHORIZATION"), "Temage")['id']
     identity = 2
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
     text_array = post_body['text'].split('\n')
@@ -158,7 +159,7 @@ def store_passage(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     user = Profile.objects.get(user__id=identity)
     style_names = post_body['styles']
     html = post_body['res_html']
@@ -203,7 +204,7 @@ def finished_work(request):
         the url of html file generated finally.
         the width of this work.
     """
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
     product = Product.objects.get(id=product_id)
     width = product.width
@@ -222,7 +223,7 @@ def download(request):
     Returns:
         the url of the image.
     """
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
     # 生成长图
     img_name = "boy.jpg"
@@ -257,7 +258,7 @@ def confirm_store(request):
     Returns:
         status code of this action.
     """
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['prodcutID']
     stars = post_body['stars']
     try:
