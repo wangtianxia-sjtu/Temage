@@ -188,7 +188,7 @@ class ModelTest(TestCase):
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.get('/api/explore/', HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(len(responseList), 4)
 
 
@@ -219,7 +219,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/explore/product/', {'productID': '11'}, HTTP_AUTHORIZATION=token, content_type="application/json")
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(responseList['id'], '11')
 
 
@@ -250,7 +250,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.get('/api/explore/collection/', HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(len(responseList[0]), 6)
 
 
@@ -281,7 +281,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.get('/api/explore/get_recent/', HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(len(responseList), 4)
 
 
@@ -332,7 +332,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.get('/api/explore/gallery/', HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(len(responseList), 7)
 
 
@@ -363,7 +363,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.get('/api/explore/gallery/more_cards/', HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(len(responseList), 4)
 
 
@@ -394,7 +394,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/workflow/store_passage/', {'styles' : ['Pony','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(len(responseList), 1)
         self.assertEqual(responseAPI.status_code, 200)
 
@@ -425,7 +425,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/workflow/finished_work/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(responseList['width'], 400)
         self.assertEqual(responseList['url'][-5:], '.html')
 
@@ -457,7 +457,7 @@ class ModelTest(TestCase):
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/workflow/download_picture/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         # print(responseAPI)
-        # responseList = json.loads(responseAPI.content)
+        # responseList = json.loads(responseAPI.content.decode('utf-8'))
         # print(responseList)
 
 
@@ -487,7 +487,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/workflow/confirm_store/', {'prodcutID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(responseAPI.status_code, 200)
 
 
@@ -575,11 +575,11 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/explore/cancel_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(responseAPI.status_code, 402)
         self.client.post('/api/explore/post_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseAPI = self.client.post('/api/explore/cancel_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content)
+        responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(responseAPI.status_code, 200)
 
 

@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 from django.shortcuts import render
 
 from Temage.models import User
@@ -96,7 +97,7 @@ def post_register(request):
     Returns:
         status code of the result.
     """
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     user = Profile.objects.filter(user__username=post_body['username'])
     if user.count() == 0:
         password = post_body['password']
@@ -129,7 +130,7 @@ def post_login_submit(request):
     Returns:
         status code of the result.
     """
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     username = post_body['username']
     password = post_body['password']
     try:
@@ -154,7 +155,7 @@ def post_jwt_authenticate(request):
     Returns:
         status code of the result.
     """
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     payload = jwt.decode(post_body['token'], "Temage")
     try:
         user = User.objects.get(id=payload['id'])
@@ -251,7 +252,7 @@ def post_search(request):
         required data in json-string form.
     """
     try:
-        keywords = json.loads(request.body)['keywords']
+        keywords = json.loads(request.body.decode('utf-8'))['keywords']
         data = {
             "size": 10,
             "query": {
@@ -276,7 +277,7 @@ def post_search(request):
         }
         response = requests.post(settings.ES_SEARCH_URL, data=json.dumps(data), headers={'Content-Type': 'application/json'})
         ids = []
-        res_data = json.loads(response.text)
+        res_data = json.loads(response.text.decode('utf-8'))
         for hit in res_data['hits']['hits']:
             ids.append(hit['_source']['ID'])
         cards = Card.objects.filter(id__in = ids)
@@ -371,7 +372,7 @@ def get_product(request):
         token = request.META.get("HTTP_AUTHORIZATION")
         payload = jwt.decode(token, "Temage")
         identity = payload['id']
-        product_id = json.loads(request.body)['productID']
+        product_id = json.loads(request.body.decode('utf-8'))['productID']
         product = Product.objects.get(id=product_id)
         content = {}
         user_info = {}
@@ -414,7 +415,7 @@ def post_collect(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
     try:
         user = Profile.objects.get(user__id=identity)
@@ -447,7 +448,7 @@ def delete_product(request):
     Returns:
         status code of this action.
     """
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
     try:
         product = Product.objects.get(id = product_id)
@@ -483,7 +484,7 @@ def cancel_collect(request):
 
     user = Profile.objects.get(user__id=identity)
 
-    post_body = json.loads(request.body)
+    post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
     try:
         card = Card.objects.get(product__id=product_id)

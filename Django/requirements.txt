@@ -1,0 +1,18 @@
+# typing==3.6.4
+# h5py==2.7.1
+# numpy==1.14.3
+# torch==0.4.1
+Django==2.1.3
+# overrides==1.9
+# tornado==5.0.2
+# mysqlclient==1.3.13
+Pillow
+pymysql
+pyjwt
+django_polymorphic
+sentry-sdk
+# xhtml2pdf==0.2.3
+# coverage==4.5.3
+pdfkit
+django-cors-headers
+requests
