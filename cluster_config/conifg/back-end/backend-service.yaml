@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: servera
+  labels:
+    app: servera
+    service: servera
+spec:
+  ports:
+  - port: 8000
+    name: http
+  selector:
+    app: servera
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: servera-v1
+  labels:
+    app: servera
+    version: v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: servera
+        version: v1
+    spec:
+      containers:
+      - name: servera
+        image: developer/server-a
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "0.4"
+          requests:
+            cpu: "0.4"
+            memory: "512Mi"

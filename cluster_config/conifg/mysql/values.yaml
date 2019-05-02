@@ -1,0 +1,14 @@
+mysqlRootPassword: temage
+mysqlDatabase: temage
+nodeSelector:
+  sql: "yes"
+persistence:
+  storageClass: standard
+timezone: "+8:00"
+configurationFiles:
+  mysql.cnf: |-
+    [mysqld]
+    skip-host-cache
+    skip-name-resolve
+    bind-address=0.0.0.0
+    sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION

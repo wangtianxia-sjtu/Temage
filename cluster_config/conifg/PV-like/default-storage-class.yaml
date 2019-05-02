@@ -1,0 +1,53 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: standard-pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: standard-pv1
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: standard-pv2
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/mysql"
