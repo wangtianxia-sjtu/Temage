@@ -73,17 +73,22 @@ class ImageMatchHandler(RequestHandler):
     @gen.coroutine
     def post(self, *args, **kwargs):
         file_metas = self.request.files.get('files', None)
+        print("request")
+        print(self.request)
+        # print("request-file")
+        # print(self.request.files)
         if not file_metas:
             self.write(json.dumps({'msg': 'no files', 'code': 400}))
         else:
             
             text_array = self.get_body_argument('text_array')
-            print(text_array)
+            print("text_array: " + text_array)
             text_array = json_decode(text_array)
             sentences_embeddings = yield [self.get_embedding(item) for item in text_array]
             file_metas = self.request.files.get('files', None)
             file_paths = []
             for meta in file_metas:
+
                 file_path = os.path.join(self.file_path, meta['filename'])
                 file_path = os.path.abspath(file_path)
                 file_path = file_path.replace('\\', '/')
@@ -93,8 +98,10 @@ class ImageMatchHandler(RequestHandler):
             sentences_embeddings = np.array(sentences_embeddings).reshape((-1, self.dimension*self.sentence_length, 1))
             results =  [self.predict(path, sentences_embeddings).tolist() for path in file_paths]
             order = []
-            for i, result in results:
+            for result in results:
                 order.append(result.index(max(result)))
-            self.write(json.dumps(order))
+            self.set_header('Content-Type', 'application/json; charset=UTF-8')
+            self.write(json.dumps({'order': order}))
+            self.finish()
             
         

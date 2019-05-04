@@ -56,8 +56,8 @@ def post_picture(request): # 需完善
     imgs_urls = []
     if len(imgs) != 0:
         for img in imgs:
-            file_url = '../media/img/cache/' + img.name
-            destination = open(file_url,'wb+')
+            file_url = os.path.abspath('./media/img/cache/' + img.name)
+            destination = open(file_url,'wb')
             for chunk in img.chunks(): 
                 destination.write(chunk)
                 destination.close()
@@ -65,10 +65,10 @@ def post_picture(request): # 需完善
     cache.imgs_urls = json.dumps(imgs_urls)
     cache.save()
     content = {}
-    content['urls'] = imgs_urls 
+    content['response'] = json.loads(cache.imgs_urls)
     return HttpResponse(json.dumps(content), status=200, content_type="application/json")
 
-@require_GET
+@require_POST
 def push_match_event(request):
     """
     Posts pictures to the model that inserts pictures into the text.
@@ -80,12 +80,28 @@ def push_match_event(request):
     identity = 2
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
-
-    match_list = [[0,0],[1,1]]
-    cache.match_list = json.dumps(match_list)
-    cache.save()
-    print("succeed")
-    return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
+    imgs_urls = json.loads(cache.imgs_urls)
+    if (len(imgs_urls) != 0):
+        post_url = settings.SERVERB_TEXT_IMAGE_MATCH_URL
+        text_array = cache.text
+        file_data = []
+        for i,url in enumerate(imgs_urls):
+            print(url)
+            file_data.append(('files', ('file'+str(i), open(url,'rb'))))
+        print(file_data)
+        data = {'text_array': text_array}
+        res = requests.post(post_url, files=file_data, data=data )
+        cache.match_list = str(json.loads(res.text)['order'])
+        cache.save()
+        print(cache.match_list)
+        content = {}
+        content['response'] = json.loads(res.text)
+        return HttpResponse(json.dumps(content), status=200, content_type="application/json")
+    else:
+        match_list = []
+        cache.match_list = json.dumps(match_list)
+        cache.save()
+        return HttpResponse(json.dumps("ok"), status=200, content_type="application/json")
 
 @require_POST
 def post_text(request):
@@ -104,7 +120,7 @@ def post_text(request):
     text_array = post_body['text'].split('\n')
     cache.text = json.dumps(text_array)
     cache.save()
-    return HttpResponse(json.dumps(text_array), status=200, content_type="application/json")
+    return HttpResponse(json.dumps(cache.text), status=200, content_type="application/json")
 
 @require_POST
 def post_confirmed_style(request):
@@ -124,7 +140,7 @@ def post_confirmed_style(request):
 
     match_list = json.loads(cache.match_list)
 
-    css_string = '<link href=\"'+ os.path.abspath("../media/css/test.css") + '\" type=\"text/css\" rel=\"stylesheet\"/>\n'
+    # css_string = '<link href=\"'+ os.path.abspath("../media/css/test.css") + '\" type=\"text/css\" rel=\"stylesheet\"/>\n'
 
     body_string = ""
 

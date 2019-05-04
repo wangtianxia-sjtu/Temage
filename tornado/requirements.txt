@@ -1,0 +1,12 @@
+ tornado==5.0.2
+ torch==0.4.1
+ typing==3.6.4
+ h5py==2.7.1
+ numpy==1.14.3
+ overrides==1.9
+ jieba
+ keras
+ tensorflow
+ sentry-sdk
+
+ pillow

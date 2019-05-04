@@ -251,54 +251,54 @@ def post_search(request):
     Returns:
         required data in json-string form.
     """
-    try:
-        keywords = json.loads(request.body.decode('utf-8'))['keywords']
-        data = {
-            "size": 10,
-            "query": {
-                "bool": {
-                    "should": [{
-                            "terms": {
-                                "style": [keywords.split()]
-                            }
-                        },
-                        {
-                            "match": {
-                                "title": {
-                                    "query": keywords,
-                                    "fuzziness": "AUTO",
-                                    "operator": "and"
-                                }
-                            }
-                        }
-                    ]
-                }
+    # try:
+    keywords = json.loads(request.body.decode('utf-8'))['keywords']
+    data = {
+    	"size": 10,
+    	"query": {
+    		"bool": {
+    			"should": [{
+    				"terms": {
+    					"style": keywords.split()
+    				}
+    			}, 
+    			{
+    				"match": {
+            "title": {
+              "query":     keywords,
+              "fuzziness": "AUTO",
+              "operator":  "and"
             }
         }
-        response = requests.post(settings.ES_SEARCH_URL, data=json.dumps(data), headers={'Content-Type': 'application/json'})
-        ids = []
-        res_data = json.loads(response.text.decode('utf-8'))
-        for hit in res_data['hits']['hits']:
-            ids.append(hit['_source']['ID'])
-        cards = Card.objects.filter(id__in = ids)
-        cards_info = []
-        for card in cards:
-            card_info = {}
-            user_info = {}
-            user_info['username'] = card.creator.user.username
-            user_info['id'] = card.creator.user.id
-            user_info['avator'] = str(card.creator.avator)
-            card_info['id'] = card.product.id
-            card_info['creator'] = user_info
-            card_info['imagesrc'] = str(card.product.image_src)
-            card_info['title'] = card.title
-            card_info['head'] = card.head
-            card_info['maintext'] = card.prompt
-            card_info['foottext'] = card.foot_text
-            cards_info.append(card_info)
-        return HttpResponse(json.dumps({"cards":cards_info}), status=200, content_type="application/json")
-    except:
-        return HttpResponse(json.dumps("something wrong"), status=400, content_type="application/json")
+    			}
+    			]
+    		}
+    	}
+    }
+    response = requests.post(settings.ES_SEARCH_URL, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+    ids = []
+    res_data = json.loads(response.text)
+    for hit in res_data['hits']['hits']:
+        ids.append(hit['_source']['ID'])
+    cards = Card.objects.filter(id__in = ids)
+    cards_info = []
+    for card in cards:
+        card_info = {}
+        user_info = {}
+        user_info['username'] = card.creator.user.username
+        user_info['id'] = card.creator.user.id
+        user_info['avator'] = str(card.creator.avator)
+        card_info['id'] = card.product.id
+        card_info['creator'] = user_info
+        card_info['imagesrc'] = str(card.product.image_src)
+        card_info['title'] = card.title
+        card_info['head'] = card.head
+        card_info['maintext'] = card.prompt
+        card_info['foottext'] = card.foot_text
+        cards_info.append(card_info)
+    return HttpResponse(json.dumps({"cards":cards_info}), status=200, content_type="application/json")
+    # except:
+    #     return HttpResponse(json.dumps("something wrong"), status=400, content_type="application/json")
     
 @require_GET
 def get_collection_data(request):

@@ -170,6 +170,7 @@ ES_CREATE_URL = 'http://101.132.73.215:9200/temage/product/'
 ES_DELETE_URL = 'http://101.132.73.215:9200/temage/product/_delete_by_query/'
 ES_SEARCH_URL = 'http://101.132.73.215:9200/temage/product/_search'
 
+#改
 # ServerB URL 
 SERVERB_HISTORIES_URL = 'http://127.0.0.1:8000/history_predict'
 SERVERB_TEXT_IMAGE_MATCH_URL = 'http://127.0.0.1:8000/image_match'

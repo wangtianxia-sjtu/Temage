@@ -608,7 +608,9 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        print("待测试")
+        # print("待测试")
+        responseAPI = self.client.post('/api/explore/post_search/', {'keywords':'xxx'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        self.assertEqual(responseAPI.status_code, 200)
 
 
 
