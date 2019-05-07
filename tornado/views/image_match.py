@@ -38,8 +38,6 @@ class ImageMatchHandler(RequestHandler):
         self.embedding = Embedder('./model/elmo/zhs.model/')
         self.target_size = (224, 224)
         self.file_path = 'files'
-        model_path = './model/text_image_match/text_image_all.h5'
-        self.model = load_model(model_path)
         self.compare_dimension = 128 
         self.sentence_length = 2
 
@@ -66,7 +64,9 @@ class ImageMatchHandler(RequestHandler):
         imgs = []
         for i in range(length):
             imgs.append(img)
-        result = self.model.predict([np.array(embedings), np.array(imgs)])
+        model_path = './model/text_image_match/text_image_all.h5'
+        model = load_model(model_path)
+        result = model.predict([np.array(embedings), np.array(imgs)])
         return result
     
     @asynchronous
