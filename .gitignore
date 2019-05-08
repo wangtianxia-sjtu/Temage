@@ -82,3 +82,6 @@ htmlcov/
 
 # IDEA
 .idea/
+
+# tornado
+tornado/files/*

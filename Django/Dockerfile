@@ -13,6 +13,11 @@ RUN apt-get update && \
 	python3-setuptools \
 	python3-pip \
 	nginx \
+    wget\
+	fontconfig\
+	libxrender1\
+	xfonts-75dpi\
+	xfonts-base\
 	supervisor &&\
 	pip3 install -U pip setuptools && \
    rm -rf /var/lib/apt/lists/*
@@ -43,7 +48,15 @@ RUN pip3 install -r /home/docker/code/requirements.txt
 # RUN django-admin.py startproject website /home/docker/code/app/
 
 EXPOSE 8000
-# WORKDIR /home/docker/code/Django
+WORKDIR /home/docker/code
+RUN wget http://se.archive.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1_amd64.deb
+RUN dpkg -i libpng12-0_1.2.54-1ubuntu1_amd64.deb
+RUN wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
+RUN dpkg -i wkhtmltox_0.12.5-1.xenial_amd64.deb
+# RUN mv /usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf.backup
+# RUN mv /usr/local/bin/wkhtmltoimage /usr/local/bin/wkhtmltoimage.backup
+# RUN rm /usr/local/bin/wkhtmltopdf.backup
+# RUN rm /usr/local/bin/wkhtmltoimage.backup
 # ENTRYPOINT ["sh", "/home/docker/code/entrypoint.sh"]
 CMD ["supervisord", "-n"]
 

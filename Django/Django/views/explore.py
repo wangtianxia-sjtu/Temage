@@ -109,7 +109,7 @@ def post_register(request):
             theme = Theme.objects.get(name=interest)
             profile.theme.add(theme)
 
-        avator = open("../test_file/img/boy.jpg", "rb")
+        avator = open("./test_file/img/boy.jpg", "rb")
         profile.avator.save('boy.jpg', File(avator), save=True)
 
         collection = Collection.objects.create(user=profile, name="收藏夹")
@@ -251,54 +251,54 @@ def post_search(request):
     Returns:
         required data in json-string form.
     """
-    # try:
-    keywords = json.loads(request.body.decode('utf-8'))['keywords']
-    data = {
-    	"size": 10,
-    	"query": {
-    		"bool": {
-    			"should": [{
-    				"terms": {
-    					"style": keywords.split()
-    				}
-    			}, 
-    			{
-    				"match": {
-            "title": {
-              "query":     keywords,
-              "fuzziness": "AUTO",
-              "operator":  "and"
+    try:
+        keywords = json.loads(request.body.decode('utf-8'))['keywords']
+        data = {
+        	"size": 10,
+        	"query": {
+        		"bool": {
+        			"should": [{
+        				"terms": {
+        					"style": keywords.split()
+        				}
+        			}, 
+        			{
+        				"match": {
+                "title": {
+                  "query":     keywords,
+                  "fuzziness": "AUTO",
+                  "operator":  "and"
+                }
             }
+        			}
+        			]
+        		}
+        	}
         }
-    			}
-    			]
-    		}
-    	}
-    }
-    response = requests.post(settings.ES_SEARCH_URL, data=json.dumps(data), headers={'Content-Type': 'application/json'})
-    ids = []
-    res_data = json.loads(response.text)
-    for hit in res_data['hits']['hits']:
-        ids.append(hit['_source']['ID'])
-    cards = Card.objects.filter(id__in = ids)
-    cards_info = []
-    for card in cards:
-        card_info = {}
-        user_info = {}
-        user_info['username'] = card.creator.user.username
-        user_info['id'] = card.creator.user.id
-        user_info['avator'] = str(card.creator.avator)
-        card_info['id'] = card.product.id
-        card_info['creator'] = user_info
-        card_info['imagesrc'] = str(card.product.image_src)
-        card_info['title'] = card.title
-        card_info['head'] = card.head
-        card_info['maintext'] = card.prompt
-        card_info['foottext'] = card.foot_text
-        cards_info.append(card_info)
-    return HttpResponse(json.dumps({"cards":cards_info}), status=200, content_type="application/json")
-    # except:
-    #     return HttpResponse(json.dumps("something wrong"), status=400, content_type="application/json")
+        response = requests.post(settings.ES_SEARCH_URL, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+        ids = []
+        res_data = json.loads(response.text)
+        for hit in res_data['hits']['hits']:
+            ids.append(hit['_source']['ID'])
+        cards = Card.objects.filter(id__in = ids)
+        cards_info = []
+        for card in cards:
+            card_info = {}
+            user_info = {}
+            user_info['username'] = card.creator.user.username
+            user_info['id'] = card.creator.user.id
+            user_info['avator'] = str(card.creator.avator)
+            card_info['id'] = card.product.id
+            card_info['creator'] = user_info
+            card_info['imagesrc'] = str(card.product.image_src)
+            card_info['title'] = card.title
+            card_info['head'] = card.head
+            card_info['maintext'] = card.prompt
+            card_info['foottext'] = card.foot_text
+            cards_info.append(card_info)
+        return HttpResponse(json.dumps({"cards":cards_info}), status=200, content_type="application/json")
+    except:
+        return HttpResponse(json.dumps("something wrong"), status=400, content_type="application/json")
     
 @require_GET
 def get_collection_data(request):
@@ -417,27 +417,27 @@ def post_collect(request):
     identity = payload['id']
     post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
-    try:
-        user = Profile.objects.get(user__id=identity)
-        card = Card.objects.get(product__id=product_id)
-        collection = user.collection
-        collection.cards.add(card)
-        # start refresh history
-        cards = collection.cards[:5]
-        vectors = []
-        for card in cards:
-            vectors.append(cards.prodcut.vectors)
-        vector_len = len(cards)
-        while vector_len != 5:
-            vector_len += 1
-            vectors.append([0 for i in range(i)])
-        response = requests.post(settings.SERVERB_HISTORIES_URL, data=json.dumps({"historys": vectors}), headers={"content-type":"application/json"})
-        user.vector = response.text
-        user.save()
-        # end refresh history
-        return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
-    except:
-        return HttpResponse(json.dumps("failed"), status=400, content_type="application/json")
+    # try:
+    user = Profile.objects.get(user__id=identity)
+    card = Card.objects.get(product__id=product_id)
+    collection = user.collection
+    collection.cards.add(card)
+    # start refresh history
+    cards = collection.cards.all()[:5]
+    vectors = []
+    for card in cards:
+        vectors.append(card.product.vector)
+    vector_len = len(cards)
+    while vector_len != 5:
+        vector_len += 1
+        vectors.append([0 for i in range(i)])
+    response = requests.post(settings.SERVERB_HISTORIES_URL, data=json.dumps({"historys": vectors}), headers={"content-type":"application/json"})
+    user.vector = response.text
+    user.save()
+    # end refresh history
+    return HttpResponse(json.dumps("succeed"), status=200, content_type="application/json")
+    # except:
+    #     return HttpResponse(json.dumps("failed"), status=400, content_type="application/json")
 
 
 def delete_product(request):

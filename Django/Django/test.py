@@ -21,13 +21,13 @@ htmlmessi = '<p> Messi is Back! </p>'
 class ModelTest(TestCase):
 # Test Set Up
     def setUp(self):
-        img1 = open("../test_file/img/good.jpg", "rb")
-        img2 = open("../test_file/img/bad.jpg", "rb")
-        img3 = open("../test_file/img/cold.jpg", "rb")
-        img4 = open("../test_file/img/hot.jpg", "rb")
-        avator1 = open("../test_file/img/girl.jpg", "rb")
-        avator2 = open("../test_file/img/boy.jpg", "rb")
-        css = open("../test_file/css/test.css", "rb")
+        img1 = open("./test_file/img/good.jpg", "rb")
+        img2 = open("./test_file/img/bad.jpg", "rb")
+        img3 = open("./test_file/img/cold.jpg", "rb")
+        img4 = open("./test_file/img/hot.jpg", "rb")
+        avator1 = open("./test_file/img/girl.jpg", "rb")
+        avator2 = open("./test_file/img/boy.jpg", "rb")
+        css = open("./test_file/css/test.css", "rb")
         User.objects.create_user(id=1,username=1234, is_superuser=True, email='1234@qq.com', password="1234")
         user1 = User.objects.create_user(username="user1", password="123", id=2)
         user2 = User.objects.create_user(username="user2", password="123")
@@ -51,7 +51,7 @@ class ModelTest(TestCase):
         style5.css.save('test.css', File(css), save=True)
         style6.css.save('test.css', File(css), save=True)
         profile1 = Profile.objects.create(user = user1)
-        cache = Cache.objects.create(user = profile1)
+        # cache = Cache.objects.create(user = profile1)
         profile2 = Profile.objects.create(user = user2)
         profile1.avator.save('girl.jpg', File(avator1), save=True)
         profile2.avator.save('boy.jpg', File(avator2), save=True)
@@ -93,6 +93,7 @@ class ModelTest(TestCase):
         collection.cards.add(card2)
         collection.cards.add(card3)
         collection.cards.add(card4)
+        cache1 = Cache.objects.create(imgs_urls="[]", text="[\"我是小明，我今天会去买菜,买菜当然是最吼的呀\", \"我是小红，我今天要去钓鱼,我觉得我可以钓到大的。\"]", match_list="[]", user = profile1)
     
 
 #  用例编号: 001{前端} 101{后端}
@@ -456,9 +457,6 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         responseAPI = self.client.post('/api/workflow/download_picture/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
-        # print(responseAPI)
-        # responseList = json.loads(responseAPI.content.decode('utf-8'))
-        # print(responseList)
 
 
 #  用例编号: 113
@@ -486,7 +484,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/workflow/confirm_store/', {'prodcutID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/workflow/confirm_store/', {'productID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(responseAPI.status_code, 200)
 
@@ -608,7 +606,6 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        # print("待测试")
         responseAPI = self.client.post('/api/explore/post_search/', {'keywords':'xxx'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)
 
@@ -627,7 +624,7 @@ class ModelTest(TestCase):
 # 		  实际输出: id为2
 # 		  备注: 根据setup的改动，id可能有所变动
 #     步骤2
-#         输入: 带有步骤1中token的request，还包含需要从收藏夹取消的product的id
+#         输入: 带有步骤1中token的request，上传的文字
 # 		  期望输出: 返回成功状态码200
 # 		  实际输出: “200”
 # 		  备注:
@@ -639,10 +636,43 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        print("待测试")
+        responseAPI = self.client.post('/api/workflow/post_picture/', {
+            "text": "我是小明，我今天会去买菜,买菜当然是最吼的呀\n我是小红，我今天要去钓鱼,我觉得我可以钓到大的。"
+            }, content_type="application/form-data", HTTP_AUTHORIZATION=token)
+        self.assertEqual(responseAPI.status_code, 200)
 
 
 #  用例编号: 119
+#  测试单元描述: 测试/api/workflow/post_picture/接口
+#  用例目的: 测试/api/workflow/post_picture/的操作是否成功
+#  前提条件: 通过数据库操作创建相应的对象们
+#  特殊的规程说明: 需登陆后操作
+#  用例间的依赖关系: 无
+#  具体流程:
+#     步骤1
+#         输入: 无
+# 		  期望输出: 登录后response中带有身份象征的token，token解码后id为2
+# 		  实际输出: id为2
+# 		  备注: 根据setup的改动，id可能有所变动
+#     步骤2
+#         输入: 带有步骤1中token的request，上传的图片
+# 		  期望输出: 返回成功状态码200
+# 		  实际输出: “200”
+# 		  备注:
+#  测试结果综合分析及建议: 测试成功
+#  测试经验总结:
+    def test_post_picture(self):
+        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
+        token = response.content
+        payload = jwt.decode(token, "Temage")
+        payloadID = payload['id']
+        self.assertEqual(payloadID, 2)
+        with open('./test_file/img/good.jpg', 'rb') as fp:
+            responseAPI = self.client.post('/api/workflow/post_picture/', {'files':  fp}, HTTP_AUTHORIZATION=token)
+        self.assertEqual(responseAPI.status_code, 200)
+
+
+#  用例编号: 120
 #  测试单元描述: 测试/api/workflow/confirm_style/接口
 #  用例目的: 测试/api/workflow/confirm_style/的操作是否成功
 #  前提条件: 通过数据库操作创建相应的对象们
@@ -655,7 +685,7 @@ class ModelTest(TestCase):
 # 		  实际输出: id为2
 # 		  备注: 根据setup的改动，id可能有所变动
 #     步骤2
-#         输入: 带有步骤1中token的request，还包含需要从收藏夹取消的product的id
+#         输入: 带有步骤1中token的request
 # 		  期望输出: 返回成功状态码200
 # 		  实际输出: “200”
 # 		  备注:
@@ -667,7 +697,8 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        print("待测试")
+        responseAPI = self.client.post('/api/workflow/confirm_style/',content_type="application/form-data", HTTP_AUTHORIZATION=token)
+        self.assertEqual(responseAPI.status_code, 200)
 
 ################################################
 ##############    集成测试    ###################
@@ -706,5 +737,5 @@ class ModelTest(TestCase):
         self.assertEqual(responseAPI.status_code, 200)
         responseAPI = self.client.post('/api/workflow/finished_work/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)
-        responseAPI = self.client.post('/api/workflow/confirm_store/', {'prodcutID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/workflow/confirm_store/', {'productID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)

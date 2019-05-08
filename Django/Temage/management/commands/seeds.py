@@ -18,13 +18,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             # do something to init the db
-            img1 = open("../test_file/img/good.jpg", "rb")
-            img2 = open("../test_file/img/bad.jpg", "rb")
-            img3 = open("../test_file/img/cold.jpg", "rb")
-            img4 = open("../test_file/img/hot.jpg", "rb")
-            avator1 = open("../test_file/img/girl.jpg", "rb")
-            avator2 = open("../test_file/img/boy.jpg", "rb")
-            css = open("../test_file/css/test.css", "rb")
+            img1 = open("./test_file/img/good.jpg", "rb")
+            img2 = open("./test_file/img/bad.jpg", "rb")
+            img3 = open("./test_file/img/cold.jpg", "rb")
+            img4 = open("./test_file/img/hot.jpg", "rb")
+            avator1 = open("./test_file/img/girl.jpg", "rb")
+            avator2 = open("./test_file/img/boy.jpg", "rb")
+            css = open("./test_file/css/test.css", "rb")
             User.objects.create_user(id=1,username=1234, is_superuser=True, email='1234@qq.com', password="1234")
             user1 = User.objects.create_user(username="user1", password="123", id=2)
             user2 = User.objects.create_user(username="user2", password="123")

@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'vfi0e2g3n-*$&=okst0f#l#^!e93g!^5vo&ne&xvf33d+ouq%7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # 改
+# DEBUG = True  # 改
 
 ALLOWED_HOSTS = ['*']
 
@@ -75,17 +75,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Django.wsgi.application'
 
-
+#改
 # Database
 # https://docs.djangoproject.com/en/2.1/ref//#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'temage',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0;",
+#             'charset': 'utf8mb4',
+#         },
+#         'TEST_CHARSET': 'utf-8',
+#     }
+# }
+#product env
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'temage',
         'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
+        'PASSWORD': '123456',
+        'HOST': 'mysql',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0;",
@@ -94,7 +110,6 @@ DATABASES = {
         'TEST_CHARSET': 'utf-8',
     }
 }
-# ,storage_engine = MyISAM
 
 
 # Password validation
@@ -166,14 +181,20 @@ sentry_sdk.init(
 
 # 改
 # ES 
-ES_CREATE_URL = 'http://101.132.73.215:9200/temage/product/'
-ES_DELETE_URL = 'http://101.132.73.215:9200/temage/product/_delete_by_query/'
-ES_SEARCH_URL = 'http://101.132.73.215:9200/temage/product/_search'
+# ES_CREATE_URL = 'http://101.132.73.215:9200/temage/product/'
+# ES_DELETE_URL = 'http://101.132.73.215:9200/temage/product/_delete_by_query/'
+# ES_SEARCH_URL = 'http://101.132.73.215:9200/temage/product/_search'
+# pruduction env
+ES_CREATE_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/'
+ES_DELETE_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/_delete_by_query/'
+ES_SEARCH_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/_search'
 
 #改
 # ServerB URL 
-SERVERB_HISTORIES_URL = 'http://127.0.0.1:8000/history_predict'
-SERVERB_TEXT_IMAGE_MATCH_URL = 'http://127.0.0.1:8000/image_match'
-
+# SERVERB_HISTORIES_URL = 'http://127.0.0.1:8000/history_predict'
+# SERVERB_TEXT_IMAGE_MATCH_URL = 'http://127.0.0.1:8000/image_match'
+# pruduction env
+SERVERB_HISTORIES_URL = 'http://serverb:8000/history_predict'
+SERVERB_TEXT_IMAGE_MATCH_URL = 'http://serverb:8000/image_match'
 
 # SECRET_KEY = os.getenv('SECRET_KEY')

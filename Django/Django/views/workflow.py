@@ -32,6 +32,7 @@ import random
 import requests
 import os
 import pdfkit
+import datetime
 
 
 
@@ -56,12 +57,14 @@ def post_picture(request): # 需完善
     imgs_urls = []
     if len(imgs) != 0:
         for img in imgs:
-            file_url = os.path.abspath('./media/img/cache/' + img.name)
+            nowTime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+            img_name = str(nowTime) + img.name
+            file_url = os.path.abspath(settings.MEDIA_ROOT + '/img/imgs/' + img_name)
             destination = open(file_url,'wb')
             for chunk in img.chunks(): 
                 destination.write(chunk)
                 destination.close()
-            imgs_urls.append(file_url)
+            imgs_urls.append(img_name)
     cache.imgs_urls = json.dumps(imgs_urls)
     cache.save()
     content = {}
@@ -85,9 +88,10 @@ def push_match_event(request):
         post_url = settings.SERVERB_TEXT_IMAGE_MATCH_URL
         text_array = cache.text
         file_data = []
-        for i,url in enumerate(imgs_urls):
+        for i,name in enumerate(imgs_urls):
+            path = os.path.abspath(settings.MEDIA_ROOT + '/img/imgs/' + name)
             print(url)
-            file_data.append(('files', ('file'+str(i), open(url,'rb'))))
+            file_data.append(('files', ('file'+str(i), open(path,'rb'))))
         print(file_data)
         data = {'text_array': text_array}
         res = requests.post(post_url, files=file_data, data=data )
@@ -135,28 +139,36 @@ def post_confirmed_style(request):
     identity = 2
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
+
     imgs_urls = json.loads(cache.imgs_urls)
     texts = json.loads(cache.text)
-
     match_list = json.loads(cache.match_list)
 
     # css_string = '<link href=\"'+ os.path.abspath("../media/css/test.css") + '\" type=\"text/css\" rel=\"stylesheet\"/>\n'
 
     body_string = ""
 
-    i = 0
-    while i < len(texts):
-        imag_flag = -1
-        for match in match_list:
-            if i == match[1]:
-                imag_flag = match[0]
-                break
-        body_string += "<p>" + texts[i] + "</p>\n"
-        if imag_flag != -1:
-            body_string += '<img src=\"' + imgs_urls[imag_flag]  + '\" alt=\"img\" />\n'
-        i = i + 1
+    if len(imgs_urls) != 0:
+        i = 0
+        while i < len(texts):
+            if i == 0:
+                body_string += "<h1>" + texts[i] + "</h1>"
+            else:
+                body_string += "<p>" + texts[i] + "</p>"
+            for j in range(0,len(match_list)):
+                if i == match_list[j]:
+                    body_string += '<img src=\"http://servera:8000/media/img/imgs/' + imgs_urls[j]  + '\" alt=\"' + imgs_urls[i] + '\" />'
+            i = i + 1
+    else:
+        i = 0
+        while i < len(texts):
+            if i == 0:
+                body_string += "<h1>" + texts[i] + "</h1>"
+            else:
+                body_string += "<p>" + texts[i] + "</p>"
+            i = i + 1
             
-    html_string = '<!DOCTYPE html>\n<html>\n<head>\n' + css_string + '</head>\n<body>\n' + body_string + '\n</body>\n</html>'
+    html_string = '<!DOCTYPE html><html><head>' + '<meta charset="utf-8">' + '</head><body>' + body_string + '</body></html>'
 
     content = {}
     content['html'] = html_string
@@ -242,10 +254,10 @@ def download(request):
     post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
     # 生成长图
-    img_name = "boy.jpg"
-    url = "/media/img/pimg/" + str(img_name)
-    content = {}
-    content['url'] = url
+    # img_name = "boy.jpg"
+    # url = "/media/img/pimg/" + str(img_name)
+    # content = {}
+    # content['url'] = url
     # 生成pdf
     product = Product.objects.get(id=product_id)
     html_file = product.html_file.path 
@@ -275,7 +287,7 @@ def confirm_store(request):
         status code of this action.
     """
     post_body = json.loads(request.body.decode('utf-8'))
-    product_id = post_body['prodcutID']
+    product_id = post_body['productID']
     stars = post_body['stars']
     try:
         product = Product.objects.get(id = product_id)
