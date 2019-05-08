@@ -48,9 +48,9 @@ def post_picture(request): # 需完善
     Returns:
        status code of this action.
     """
-    # token = request.META.get("HTTP_AUTHORIZATION")
-    # payload = jwt.decode(token, "Temage")
-    identity = 2
+    token = request.META.get("HTTP_AUTHORIZATION")
+    payload = jwt.decode(token, "Temage")
+    identity = payload['id']
     cache = Profile.objects.get(user__id=identity).cache
 
     imgs = request.FILES.getlist("images")
@@ -80,7 +80,9 @@ def push_match_event(request):
     Returns:
        status code of this action.
     """
-    identity = 2
+    token = request.META.get("HTTP_AUTHORIZATION")
+    payload = jwt.decode(token, "Temage")
+    identity = payload['id']
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
     imgs_urls = json.loads(cache.imgs_urls)
@@ -116,8 +118,9 @@ def post_text(request):
     Returns:
         status code of this action.
     """
-    # identity = jwt.decode(request.META.get("HTTP_AUTHORIZATION"), "Temage")['id']
-    identity = 2
+    token = request.META.get("HTTP_AUTHORIZATION")
+    payload = jwt.decode(token, "Temage")
+    identity = payload['id']
     post_body = json.loads(request.body.decode('utf-8'))
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
@@ -135,8 +138,9 @@ def post_confirmed_style(request):
     Returns:
         the result html from the models.
     """
-    # identity = jwt.decode(request.META.get("HTTP_AUTHORIZATION"), "Temage")['id']
-    identity = 2
+    token = request.META.get("HTTP_AUTHORIZATION")
+    payload = jwt.decode(token, "Temage")
+    identity = payload['id']
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
 
@@ -194,14 +198,10 @@ def store_passage(request):
     title = post_body['title']
     width = post_body['t_width']
     score = 0
-    # only for test
+    
     theme = Theme.objects.get(name=style_names[0])
     style = theme.styles.all()[0]
     product = Product.objects.create(title=title, html=html, creator=user, style=style, score=score, width=width)
-        
-    # for style_name in style_names:
-    #     style = Theme.objects.get(name=style_name)
-    #     product.theme.add(style)
 
     # store htmlfile
     file_name = "html_" + str(product.id) + ".html"
@@ -211,13 +211,13 @@ def store_passage(request):
     content['ID'] = product.id
         
     # ES index create start
-    # index_data = {"title":title, "style":style_names, "ID": product.id}
-    # res = requests.post(settings.ES_CREATE_URL, 
-    #                 headers = {'content-Type': 'application/json'},
-    #                 data = json.dumps(index_data)
-    #             )
-    # if res.status_code != 201:
-    #     raise RuntimeError("The ES index has not been updated, please start ES server or check the post data")
+    index_data = {"title":title, "style":style_names, "ID": product.id}
+    res = requests.post(settings.ES_CREATE_URL, 
+                    headers = {'content-Type': 'application/json'},
+                    data = json.dumps(index_data)
+                )
+    if res.status_code != 201:
+        raise RuntimeError("The ES index has not been updated, please start ES server or check the post data")
         # ES index create end
 
     return HttpResponse(json.dumps(content), status = 200, content_type = "application/json")
@@ -253,11 +253,7 @@ def download(request):
     """
     post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
-    # 生成长图
-    # img_name = "boy.jpg"
-    # url = "/media/img/pimg/" + str(img_name)
-    # content = {}
-    # content['url'] = url
+
     # 生成pdf
     product = Product.objects.get(id=product_id)
     html_file = product.html_file.path 
@@ -270,12 +266,10 @@ def download(request):
     content = {}
     content['file_path'] = product.pdf_file.url
 
-
     response =FileResponse(pdf_file)
     response['Content-Type']='application/octet-stream'
     response['Content-Disposition']='attachment;filename="test.pdf"'
     return response
-    # return HttpResponse(json.dumps(content), content_type="application/json")
 
 @require_POST
 def confirm_store(request):
