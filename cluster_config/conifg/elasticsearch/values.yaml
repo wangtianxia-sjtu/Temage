@@ -1,10 +1,10 @@
-master:
-  service:
-    type: NodePort
-    nodePort: 30004
 sysctlImage:
   enabled: true
 data:
   persistence:
-    size: 3Gi
+    size: 8Gi
     storageClass: standard
+coordinating:
+  service:
+    type: NodePort
+    nodePort: 30005

@@ -27,9 +27,11 @@ spec:
         app: frontend
         version: v1
     spec:
+      nodeSelector:
+        frontend: "yes"
       containers:
       - name: frontend
-        image: developer/tmg-front-end
+        image: developer/frontend:v5
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80

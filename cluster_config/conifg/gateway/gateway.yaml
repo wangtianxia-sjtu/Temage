@@ -25,14 +25,12 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /api
-    rewrite:
-      uri: /
+        prefix: "/api"
     route:
     - destination:
-         host: serverb
+         host: servera
          port:
-           number: 8964
+           number: 8000
   - match:
     - uri:
         regex: "^(?!api$).*"
