@@ -1,0 +1,84 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: standard-pv0
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/pv0"
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: standard-pv1
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/pv1"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: standard-pv2
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/pv2"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: standard-pv3
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/pv3"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: standard-pv4
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/pv4"
+

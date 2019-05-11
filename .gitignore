@@ -59,3 +59,29 @@ typings/
 
 # next.js build output
 .next
+# model file
+/tornado/model/zhs.model
+tornado/model/elmo/zhs.model/*
+*.pyc
+# migrations
+/Django/Temage/migrations
+
+# test resources
+# test_file/ (commented out for CI/CD usage)
+media/
+
+# vscode files
+.vscode/
+docs/~\$mage开发文档\.docx
+*.h5
+*.jpg
+
+# test coverage
+htmlcov/
+.coverage
+
+# IDEA
+.idea/
+
+# tornado
+tornado/files/*

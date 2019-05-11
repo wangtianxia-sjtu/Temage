@@ -1,0 +1,42 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: serverb-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: serverb
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - serverb-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/api"
+    route:
+    - destination:
+         host: servera
+         port:
+           number: 8000
+  - match:
+    - uri:
+        regex: "^(?!api$).*"
+    route:
+    - destination:
+        host: frontend
+        port:
+          number: 80
+

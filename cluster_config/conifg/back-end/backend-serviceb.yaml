@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: serverb
+  labels:
+    app: serverb
+    service: serverb
+spec:
+  ports:
+  - port: 8000
+    name: http
+  selector:
+    app: serverb
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: serverb-v1
+  labels:
+    app: serverb
+    version: v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: serverb
+        version: v1
+    spec:
+      nodeSelector:
+        serverb: "yes"
+      containers:
+      - name: serverb
+        image: developer/server-b:v3
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "4096Mi"
+            cpu: "1"
+          requests:
+            cpu: "0.5"
+            memory: "2048Mi"

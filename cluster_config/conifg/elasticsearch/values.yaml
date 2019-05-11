@@ -1,0 +1,10 @@
+sysctlImage:
+  enabled: true
+data:
+  persistence:
+    size: 8Gi
+    storageClass: standard
+coordinating:
+  service:
+    type: NodePort
+    nodePort: 30005
