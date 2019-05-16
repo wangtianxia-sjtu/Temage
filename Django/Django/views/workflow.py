@@ -51,10 +51,10 @@ def post_picture(request): # 需完善
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
+    # identity = 2
     cache = Profile.objects.get(user__id=identity).cache
-
-    imgs = request.FILES.getlist("images")
-    imgs_urls = []
+    imgs = request.FILES.getlist("file")
+    prev_urls = json.loads(cache.imgs_urls)
     if len(imgs) != 0:
         for img in imgs:
             nowTime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
@@ -64,8 +64,8 @@ def post_picture(request): # 需完善
             for chunk in img.chunks(): 
                 destination.write(chunk)
                 destination.close()
-            imgs_urls.append(img_name)
-    cache.imgs_urls = json.dumps(imgs_urls)
+            prev_urls.append(img_name)
+    cache.imgs_urls = json.dumps(prev_urls)
     cache.save()
     content = {}
     content['response'] = json.loads(cache.imgs_urls)
@@ -92,14 +92,14 @@ def push_match_event(request):
         file_data = []
         for i,name in enumerate(imgs_urls):
             path = os.path.abspath(settings.MEDIA_ROOT + '/img/imgs/' + name)
-            print(url)
+            # print(url)
             file_data.append(('files', ('file'+str(i), open(path,'rb'))))
-        print(file_data)
+        # print(file_data)
         data = {'text_array': text_array}
         res = requests.post(post_url, files=file_data, data=data )
         cache.match_list = str(json.loads(res.text)['order'])
         cache.save()
-        print(cache.match_list)
+        # print(cache.match_list)
         content = {}
         content['response'] = json.loads(res.text)
         return HttpResponse(json.dumps(content), status=200, content_type="application/json")
@@ -124,6 +124,8 @@ def post_text(request):
     post_body = json.loads(request.body.decode('utf-8'))
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
+    title = post_body['title']
+    cache.title = title
     text_array = post_body['text'].split('\n')
     cache.text = json.dumps(text_array)
     cache.save()
@@ -141,42 +143,53 @@ def post_confirmed_style(request):
     token = request.META.get("HTTP_AUTHORIZATION")
     payload = jwt.decode(token, "Temage")
     identity = payload['id']
+    # identity = 2
+    post_body = json.loads(request.body.decode('utf-8'))
+    styles = post_body['styles']
+
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
 
     imgs_urls = json.loads(cache.imgs_urls)
     texts = json.loads(cache.text)
     match_list = json.loads(cache.match_list)
+    title = cache.title
 
     # css_string = '<link href=\"'+ os.path.abspath("../media/css/test.css") + '\" type=\"text/css\" rel=\"stylesheet\"/>\n'
 
-    body_string = ""
+    body_string = "<div  id='write'  class = 'is-mac'>"
 
     if len(imgs_urls) != 0:
+        body_string += "<h1>" + title + "</h1>"
         i = 0
         while i < len(texts):
-            if i == 0:
-                body_string += "<h1>" + texts[i] + "</h1>"
-            else:
-                body_string += "<p>" + texts[i] + "</p>"
+            body_string += "<p>" + texts[i] + "</p>"
             for j in range(0,len(match_list)):
                 if i == match_list[j]:
-                    body_string += '<img src=\"http://servera:8000/media/img/imgs/' + imgs_urls[j]  + '\" alt=\"' + imgs_urls[i] + '\" />'
+                    body_string += '<img src=\"http://202.120.40.109:19132/media/img/imgs/' + imgs_urls[j]  + '\" alt=\"' + imgs_urls[i] + '\" />'
             i = i + 1
     else:
         i = 0
         while i < len(texts):
-            if i == 0:
-                body_string += "<h1>" + texts[i] + "</h1>"
-            else:
-                body_string += "<p>" + texts[i] + "</p>"
+            body_string += "<p>" + texts[i] + "</p>"
             i = i + 1
-            
-    html_string = '<!DOCTYPE html><html><head>' + '<meta charset="utf-8">' + '</head><body>' + body_string + '</body></html>'
+    body_string += "</div>"
 
+    head_string = "<head>"
+    head_string += '<meta charset="utf-8">'
+    if (len(styles)==0):
+        theme = Theme.objects.get(name="NONE")
+    else:
+        theme = Theme.objects.get(name=styles[0])
+    style = theme.styles.all()[0]
+    url = "https://github.com/Dianaaaa/temage_resources/blob/master/css/" + style.name + ".css"
+    head_string  += "<link href=\""+ url +"\" rel=\"stylesheet\" type=\"text/css\" />"
+
+    html_string = '<!DOCTYPE html><html>' + head_string + '<body>' + body_string + '</body></html>'
+    
     content = {}
     content['html'] = html_string
-    print(html_string)
+    # print(html_string)
     return HttpResponse(json.dumps(content), content_type="application/json")
 
 @require_POST
@@ -193,15 +206,33 @@ def store_passage(request):
     identity = payload['id']
     post_body = json.loads(request.body.decode('utf-8'))
     user = Profile.objects.get(user__id=identity)
+    cache = user.cache
     style_names = post_body['styles']
     html = post_body['res_html']
     title = post_body['title']
     width = post_body['t_width']
     score = 0
-    
-    theme = Theme.objects.get(name=style_names[0])
-    style = theme.styles.all()[0]
-    product = Product.objects.create(title=title, html=html, creator=user, style=style, score=score, width=width)
+
+    product = Product.objects.create(title=title, html=html, creator=user, score=score, width=width)
+    imgs_urls = json.loads(cache.imgs_urls)
+    if (len(imgs_urls) != 0):
+        path = os.path.abspath(settings.MEDIA_ROOT + '/img/imgs/' + imgs_urls[0])
+        img = open(path, "rb")
+        # print(">>>>>")
+        # print(path)
+        # print("<<<<<")
+        product.image_src.save(imgs_urls[0], File(img), save=True)
+    img_list = []
+    cache.imgs_urls = json.dumps(img_list)
+    cache.save()
+    if (len(style_names) == 0):
+        theme = Theme.objects.get(name="NONE")
+        product.theme.add(theme)
+    else:
+        for name in style_names:
+            # print(name)
+            theme = Theme.objects.get(name=name)
+            product.theme.add(theme)
 
     # store htmlfile
     file_name = "html_" + str(product.id) + ".html"
@@ -238,7 +269,7 @@ def finished_work(request):
     width = product.width
     url = product.html_file.url
     content = {}
-    content['url'] = url
+    content['url'] = "http://202.120.40.109:19132/" + url
     content['width'] = width
     return HttpResponse(json.dumps(content), content_type = "application/json")
 
@@ -264,7 +295,7 @@ def download(request):
     product.pdf_file.save(pdf_file_name, File(pdf_file), save=True)
 
     content = {}
-    content['file_path'] = product.pdf_file.url
+    content['file_path'] = "http://202.120.40.109:19132/" + product.pdf_file.url
 
     response =FileResponse(pdf_file)
     response['Content-Type']='application/octet-stream'
@@ -283,10 +314,13 @@ def confirm_store(request):
     post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
     stars = post_body['stars']
+    vector = post_body['vector']
     try:
         product = Product.objects.get(id = product_id)
         product.is_finished = 1
         product.score = stars
+        product.vector =  vector
+        product.save()
         return HttpResponse(json.dumps("succeed"), status = 200, content_type = "application/json")
     except:
         return HttpResponse(json.dumps("error"), status = 400, content_type = "application/json")
