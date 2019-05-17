@@ -24,7 +24,10 @@ class Command(BaseCommand):
             img4 = open("./test_file/img/hot.jpg", "rb")
             avator1 = open("./test_file/img/girl.jpg", "rb")
             avator2 = open("./test_file/img/boy.jpg", "rb")
-            css = open("./test_file/css/test.css", "rb")
+            style_file1 = open("./test_file/css/style1.css", "rb")
+            style_file2 = open("./test_file/css/style2.css", "rb")
+            style_file3 = open("./test_file/css/style3.css", "rb")
+            style_file4 = open("./test_file/css/style4.css", "rb")
             User.objects.create_user(id=1,username=1234, is_superuser=True, email='1234@qq.com', password="1234")
             user1 = User.objects.create_user(username="user1", password="123", id=2)
             user2 = User.objects.create_user(username="user2", password="123")
@@ -51,6 +54,7 @@ class Command(BaseCommand):
             style2.css.save('style2.css', File(style_file1), save=True)
             style3.css.save('style3.css', File(style_file1), save=True)
             style4.css.save('style4.css', File(style_file1), save=True)
+
             theme1.styles.add(style4)
             theme2.styles.add(style2)
             theme3.styles.add(style3)
@@ -65,8 +69,9 @@ class Command(BaseCommand):
             theme13.styles.add(style1)
             theme14.styles.add(style2)
             theme15.styles.add(style3)
+
             profile1 = Profile.objects.create(user = user1)
-            cache = Cache.objects.create(user = profile1)
+            # cache = Cache.objects.create(user = profile1)
             profile2 = Profile.objects.create(user = user2)
             profile1.avator.save('girl.jpg', File(avator1), save=True)
             profile2.avator.save('boy.jpg', File(avator2), save=True)
@@ -113,6 +118,8 @@ class Command(BaseCommand):
             collection.cards.add(card2)
             collection.cards.add(card3)
             collection.cards.add(card4)
+            cache1 = Cache.objects.create(imgs_urls="[]", title="小明与小红", text="[\"我是小明，我今天会去买菜,买菜当然是最吼的呀\", \"我是小红，我今天要去钓鱼,我觉得我可以钓到大的。\"]", match_list="[]", user = profile1)
+    
         except:
             raise CommandError("The seed command has something wrong.")
         else:
