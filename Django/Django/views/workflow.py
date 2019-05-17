@@ -182,7 +182,7 @@ def post_confirmed_style(request):
     else:
         theme = Theme.objects.get(name=styles[0])
     style = theme.styles.all()[0]
-    url = "https://github.com/Dianaaaa/temage_resources/blob/master/css/" + style.name + ".css"
+    url = "https://raw.githubusercontent.com/Dianaaaa/temage_resources/master/css/" + style.name + ".css"
     head_string  += "<link href=\""+ url +"\" rel=\"stylesheet\" type=\"text/css\" />"
 
     html_string = '<!DOCTYPE html><html>' + head_string + '<body>' + body_string + '</body></html>'
