@@ -24,9 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'vfi0e2g3n-*$&=okst0f#l#^!e93g!^5vo&ne&xvf33d+ouq%7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True  # 改
+DEBUG = True  # 改
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', 'temage.com']
 
 
 
@@ -79,37 +79,37 @@ WSGI_APPLICATION = 'Django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref//#databases
 
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'temage',
-#        'USER': 'root',
-#        'PASSWORD': '',
-#        'HOST': '127.0.0.1',
-#        'PORT': '3306',
-#        'OPTIONS': {
-#            'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0;",
-#            'charset': 'utf8mb4',
-#        },
-#        'TEST_CHARSET': 'utf-8',
-#    }
-#}
-#product env
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'temage',
-        'USER': 'root',
-        'PASSWORD': '123456',
-        'HOST': 'mysql',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0;",
-            'charset': 'utf8mb4',
-        },
-        'TEST_CHARSET': 'utf-8',
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'temage',
+       'USER': 'root',
+       'PASSWORD': '',
+       'HOST': '127.0.0.1',
+       'PORT': '3306',
+       'OPTIONS': {
+           'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0;",
+           'charset': 'utf8mb4',
+       },
+       'TEST_CHARSET': 'utf-8',
+   }
 }
+#product env
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'temage',
+#         'USER': 'root',
+#         'PASSWORD': '123456',
+#         'HOST': 'mysql',
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES',foreign_key_checks = 0;",
+#             'charset': 'utf8mb4',
+#         },
+#         'TEST_CHARSET': 'utf-8',
+#     }
+# }
 
 
 # Password validation
@@ -153,21 +153,22 @@ STATIC_ROOT = '/static/'
 
 
 
-CORS_ALLOW_ALL = True
+# CORS_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_WHITELIST = (
-#     '*'
-# )
-# CORS_ALLOW_METHODS = (
-#     'DELETE',
-#     'GET',
-#     'OPTIONS',
-#     'PATCH',
-#     'POST',
-#     'PUT',
-#     'VIEW',
-# )
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8081',
+	'temage.com:8081'
+)
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
 
 # CORS_ALLOW_HEADERS = (
 #     'XMLHttpRequest',
@@ -204,20 +205,22 @@ sentry_sdk.init(
 
 # 改
 # ES 
-#ES_CREATE_URL = 'http://101.132.73.215:9200/temage/product/'
-#ES_DELETE_URL = 'http://101.132.73.215:9200/temage/product/_delete_by_query/'
-#ES_SEARCH_URL = 'http://101.132.73.215:9200/temage/product/_search'
+ES_CREATE_URL = 'http://101.132.73.215:9200/temage/product/'
+ES_DELETE_URL = 'http://101.132.73.215:9200/temage/product/_delete_by_query/'
+ES_SEARCH_URL = 'http://101.132.73.215:9200/temage/product/_search'
 # pruduction env
-ES_CREATE_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/'
-ES_DELETE_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/_delete_by_query/'
-ES_SEARCH_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/_search'
+# ES_CREATE_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/'
+# ES_DELETE_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/_delete_by_query/'
+# ES_SEARCH_URL = 'http://elastic-elasticsearch-coordinating-only:9200/temage/product/_search'
 
 #改
 # ServerB URL 
-#SERVERB_HISTORIES_URL = 'http://127.0.0.1:8000/history_predict'
-#SERVERB_TEXT_IMAGE_MATCH_URL = 'http://127.0.0.1:8000/image_match'
+# SERVERA_PATH = 'http://localhost:8080/media'
+SERVERB_HISTORIES_URL = 'http://127.0.0.1:8000/history_predict'
+SERVERB_TEXT_IMAGE_MATCH_URL = 'http://127.0.0.1:8000/image_match'
+MEDIA_PATH = 'http://localhost:8080/media/'
 # pruduction env
-SERVERB_HISTORIES_URL = 'http://serverb:8000/history_predict'
-SERVERB_TEXT_IMAGE_MATCH_URL = 'http://serverb:8000/image_match'
-
+# SERVERB_HISTORIES_URL = 'http://serverb:8000/history_predict'
+# SERVERB_TEXT_IMAGE_MATCH_URL = 'http://serverb:8000/image_match'
+# MEDIA_PATH = 'http://servera:8080/media/'
 # SECRET_KEY = os.getenv('SECRET_KEY')

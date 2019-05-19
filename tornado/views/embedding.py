@@ -12,11 +12,19 @@ import json
 import numpy as np
 class EmbeddingHandler(RequestHandler):
     def set_default_headers(self):
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET')
-        self.set_header('Access-Control-Max-Age', 1000)
+        self.set_header('Access-Control-Allow-Origin', 'http://temage.com:8081')
         self.set_header('Access-Control-Allow-Headers', '*')
+        self.set_header('Access-Control-Allow-Credentials', 'true')
+        self.set_header('Access-Control-Max-Age', 1000)
         self.set_header('Content-type', 'application/json')
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Allow-Headers',
+                    'Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers, X-Requested-By, Access-Control-Allow-Methods, authorization')
+    def options(self):
+        # no body
+        self.set_status(200)
+        self.finish()
+
     def initialize(self):
         self.sentence_vector = 1024
         self.min_length = 20

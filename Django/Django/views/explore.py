@@ -51,7 +51,7 @@ def get_homepage_data(request):
         for card in recentpic:
             card_info = {}
             card_info['title'] = card.product.title
-            card_info['imgsrc'] = "http://202.120.40.109:19132/media/" + str(card.product.image_src)
+            card_info['imgsrc'] = settings.MEDIA_PATH + str(card.product.image_src)
             card_info['promt'] = card.prompt
             card_info['id'] = card.product.id
             reclist.append(card_info)
@@ -61,7 +61,7 @@ def get_homepage_data(request):
         for card in cards:
             card_info = {}
             card_info['title'] = card.product.title
-            card_info['imgsrc'] = "http://202.120.40.109:19132/media/" + str(card.product.image_src)
+            card_info['imgsrc'] = settings.MEDIA_PATH + str(card.product.image_src)
             card_info['prompt'] = card.prompt
             card_info['id'] = card.product.id
             cards_info.append(card_info)
@@ -71,7 +71,7 @@ def get_homepage_data(request):
         for card in cards:
             card_info = {}
             card_info['title'] = card.product.title
-            card_info['imgsrc'] = "http://202.120.40.109:19132/media/" + str(card.product.image_src)
+            card_info['imgsrc'] = settings.MEDIA_PATH + str(card.product.image_src)
             card_info['promt'] = card.prompt
             card_info['id'] = card.product.id
             gallist.append(card_info)
@@ -200,7 +200,7 @@ def get_gallery_data(request):
             card_info['id'] = card.product.id
             card_info['creator'] = user_info
             card_info['title'] = card.title
-            card_info['imagesrc'] = "http://202.120.40.109:19132/media/" + str(card.product.image_src)
+            card_info['imagesrc'] = settings.MEDIA_PATH + str(card.product.image_src)
             card_info['head'] = card.head
             card_info['maintext'] = card.prompt
             card_info['foottext'] = card.foot_text
@@ -232,7 +232,7 @@ def get_gallery_more_cards(request):
             user_info['avator'] = str(card.creator.avator)
             card_info['id'] = card.product.id
             card_info['creator'] = user_info
-            card_info['imagesrc'] = "http://202.120.40.109:19132/media/" + str(card.product.image_src)
+            card_info['imagesrc'] = settings.MEDIA_PATH + str(card.product.image_src)
             card_info['title'] = card.title
             card_info['head'] = card.head
             card_info['maintext'] = card.prompt
@@ -290,7 +290,7 @@ def post_search(request):
             user_info['avator'] = str(card.creator.avator)
             card_info['id'] = card.product.id
             card_info['creator'] = user_info
-            card_info['imagesrc'] = "http://202.120.40.109:19132/media/" + str(card.product.image_src)
+            card_info['imagesrc'] = settings.MEDIA_PATH + str(card.product.image_src)
             card_info['title'] = card.title
             card_info['head'] = card.head
             card_info['maintext'] = card.prompt
@@ -323,7 +323,7 @@ def get_collection_data(request):
             user_info['id'] = card.creator.user.id
             user_info['avator'] = str(card.creator.avator)
             card_info['name'] = card.product.title
-            card_info['imagesrc'] = "http://202.120.40.109:19132/media/" + str(card.product.image_src)
+            card_info['imagesrc'] = settings.MEDIA_PATH + str(card.product.image_src)
             card_info['prompt'] = card.prompt
             card_info['id'] = card.product.id
             card_info['creator'] = user_info
@@ -351,7 +351,7 @@ def get_recent_data(request):
         for pic in recentpic:
             picinfo = {}
             picinfo['title'] = pic.product.title
-            picinfo['img_url'] = "http://202.120.40.109:19132/media/" + str(pic.product.image_src)
+            picinfo['img_url'] = settings.MEDIA_PATH + str(pic.product.image_src)
             picinfo['promt'] = pic.prompt
             picinfo['id'] = pic.product.id
             reclist.append(picinfo)
@@ -378,7 +378,7 @@ def get_product(request):
         user_info = {}
         user_info['username'] = product.creator.user.username
         user_info['id'] = product.creator.user.id
-        user_info['avator'] = "http://202.120.40.109:19132/media/" + str(product.creator.avator)
+        user_info['avator'] = settings.MEDIA_PATH + str(product.creator.avator)
         if product.creator.user.id == identity:
             content['can_be_delete'] = 1
         else:

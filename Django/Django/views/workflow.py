@@ -33,6 +33,7 @@ import requests
 import os
 import pdfkit
 import datetime
+import re
 
 
 
@@ -60,6 +61,10 @@ def post_picture(request): # 需完善
             nowTime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
             img_name = str(nowTime) + img.name
             file_url = os.path.abspath(settings.MEDIA_ROOT + '/img/imgs/' + img_name)
+            file_url.replace("\\", "/")
+            # print(">>>>>")
+            # print(file_url)
+            
             destination = open(file_url,'wb')
             for chunk in img.chunks(): 
                 destination.write(chunk)
@@ -85,6 +90,7 @@ def push_match_event(request):
     identity = payload['id']
     user = Profile.objects.get(user__id=identity)
     cache = user.cache
+    # print(cache.imgs_urls)
     imgs_urls = json.loads(cache.imgs_urls)
     if (len(imgs_urls) != 0):
         post_url = settings.SERVERB_TEXT_IMAGE_MATCH_URL
@@ -127,7 +133,14 @@ def post_text(request):
     title = post_body['title']
     cache.title = title
     text_array = post_body['text'].split('\n')
-    cache.text = json.dumps(text_array)
+    text_final = []
+    i = 0
+    while (i < len(text_array)-1):
+        if (len(text_array[i]) != 0):
+            text_final.append(text_array[i])
+        i = i + 1
+    cache.text = json.dumps(text_final)
+    print(text_final)
     cache.save()
     return HttpResponse(json.dumps(cache.text), status=200, content_type="application/json")
 
@@ -163,15 +176,28 @@ def post_confirmed_style(request):
         body_string += "<h1>" + title + "</h1>"
         i = 0
         while i < len(texts):
-            body_string += "<p>" + texts[i] + "</p>"
+            char = texts[i][len(texts[i])-1]
+            # print(char)
+            if (char != '。') and (char != '.'):
+                body_string += "<h2>" + texts[i] + "</h2>"
+            else:
+                body_string += "<p>" + texts[i] + "</p>"
             for j in range(0,len(match_list)):
                 if i == match_list[j]:
-                    body_string += '<img src=\"http://202.120.40.109:19132/media/img/imgs/' + imgs_urls[j]  + '\" alt=\"' + imgs_urls[i] + '\" />'
+                    body_string += '<img src=\"'+settings.MEDIA_PATH+'img/imgs/' + imgs_urls[j]  + '\" alt=\"' + imgs_urls[j] + '\" />'
+                    match_caption = re.split('。|，|, |. ', texts[i])
+                    # print(match_caption)
+                    body_string += '<h3>' + match_caption[0] + '</h3>'
             i = i + 1
     else:
         i = 0
         while i < len(texts):
-            body_string += "<p>" + texts[i] + "</p>"
+            char = texts[i][len(texts[i])-1]
+            # print(char)
+            if (char != '。') and (char != '.'):
+                body_string += "<h2>" + texts[i] + "</h2>"
+            else:
+                body_string += "<p>" + texts[i] + "</p>"
             i = i + 1
     body_string += "</div>"
 
@@ -181,15 +207,21 @@ def post_confirmed_style(request):
         theme = Theme.objects.get(name="NONE")
     else:
         theme = Theme.objects.get(name=styles[0])
+    # print(styles)
+    # print(theme.styles.all())
     style = theme.styles.all()[0]
-    url = "https://raw.githubusercontent.com/Dianaaaa/temage_resources/master/css/" + style.name + ".css"
+    url = "http://localhost:8080/media/cssfile/" + style.name + ".css"
     head_string  += "<link href=\""+ url +"\" rel=\"stylesheet\" type=\"text/css\" />"
 
     html_string = '<!DOCTYPE html><html>' + head_string + '<body>' + body_string + '</body></html>'
     
+    img_list = []
+    cache.imgs_urls = json.dumps(img_list)
+    cache.save()
+
     content = {}
     content['html'] = html_string
-    # print(html_string)
+    print(html_string)
     return HttpResponse(json.dumps(content), content_type="application/json")
 
 @require_POST
@@ -209,6 +241,8 @@ def store_passage(request):
     cache = user.cache
     style_names = post_body['styles']
     html = post_body['res_html']
+    print(">>>>>>")
+    print(html)
     title = post_body['title']
     width = post_body['t_width']
     score = 0
@@ -236,11 +270,12 @@ def store_passage(request):
 
     # store htmlfile
     file_name = "html_" + str(product.id) + ".html"
+    # print(file_name)
     product.html_file.save(file_name, ContentFile(html))
 
     content = {}
     content['ID'] = product.id
-        
+    # print(product.id)
     # ES index create start
     index_data = {"title":title, "style":style_names, "ID": product.id}
     res = requests.post(settings.ES_CREATE_URL, 
@@ -265,11 +300,12 @@ def finished_work(request):
     """
     post_body = json.loads(request.body.decode('utf-8'))
     product_id = post_body['productID']
+    # print(product_id)
     product = Product.objects.get(id=product_id)
     width = product.width
     url = product.html_file.url
     content = {}
-    content['url'] = "http://202.120.40.109:19132/" + url
+    content['url'] = "http://localhost:8080/" + url
     content['width'] = width
     return HttpResponse(json.dumps(content), content_type = "application/json")
 
@@ -295,7 +331,7 @@ def download(request):
     product.pdf_file.save(pdf_file_name, File(pdf_file), save=True)
 
     content = {}
-    content['file_path'] = "http://202.120.40.109:19132/" + product.pdf_file.url
+    content['file_path'] =  "http://localhost:8080/"+ product.pdf_file.url
 
     response =FileResponse(pdf_file)
     response['Content-Type']='application/octet-stream'

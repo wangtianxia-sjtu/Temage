@@ -42,7 +42,7 @@
 
 # CMD ["supervisord", "-n"]
 
-From dianaaaa/server-a:v6 
+From dianaaaa/server-a:v8 
 
 COPY . /home/docker/code/
 # CMD ["supervisord", "-n"]
