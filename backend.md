@@ -95,3 +95,4 @@ if there is anything wrong, please contact administrator.
 ### cluster deploy
 
 Temage uses kubernetes + Istio  to deploy the service, the whole configs about the cluster  are in the cluster_config.
+

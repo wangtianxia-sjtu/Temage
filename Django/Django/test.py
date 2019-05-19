@@ -27,29 +27,53 @@ class ModelTest(TestCase):
         img4 = open("./test_file/img/hot.jpg", "rb")
         avator1 = open("./test_file/img/girl.jpg", "rb")
         avator2 = open("./test_file/img/boy.jpg", "rb")
-        css = open("./test_file/css/test.css", "rb")
+        style_file1 = open("./test_file/css/style1.css", "rb")
+        style_file2 = open("./test_file/css/style2.css", "rb")
+        style_file3 = open("./test_file/css/style3.css", "rb")
+        style_file4 = open("./test_file/css/style4.css", "rb")
         User.objects.create_user(id=1,username=1234, is_superuser=True, email='1234@qq.com', password="1234")
         user1 = User.objects.create_user(username="user1", password="123", id=2)
         user2 = User.objects.create_user(username="user2", password="123")
-        theme1 = Theme.objects.create(name="Sports",id=1)
-        theme2 = Theme.objects.create(name="Art",id=2)
-        theme3 = Theme.objects.create(name="Tech",id=3)
-        theme4 = Theme.objects.create(name="Movie",id=4)                      
-        theme5 = Theme.objects.create(name="Pony",id=5)
-        theme6 = Theme.objects.create(name="Celebrity",id=6)
-        style1 = Style.objects.create(name="style_1")
-        style2 = Style.objects.create(name="style_2")
-        style3 = Style.objects.create(name="style_4")
-        style4 = Style.objects.create(name="style_5")
-        style5 = Style.objects.create(name="style_6")
-        style6 = Style.objects.create(name="style_7")
-        theme5.styles.add(style1)
-        style1.css.save('test.css', File(css), save=True)
-        style2.css.save('test.css', File(css), save=True)
-        style3.css.save('test.css', File(css), save=True)
-        style4.css.save('test.css', File(css), save=True)
-        style5.css.save('test.css', File(css), save=True)
-        style6.css.save('test.css', File(css), save=True)
+        theme1 = Theme.objects.create(name="constellation", id=1)
+        theme2 = Theme.objects.create(name="economics", id=2)
+        theme3 = Theme.objects.create(name="education", id=3)
+        theme4 = Theme.objects.create(name="entertainment", id=4)                      
+        theme5 = Theme.objects.create(name="fashion", id=5)
+        theme6 = Theme.objects.create(name="furniture", id=6)
+        theme7 = Theme.objects.create(name="game", id=7)
+        theme8 = Theme.objects.create(name="lottery", id=8)
+        theme9 = Theme.objects.create(name="politics", id=9)
+        theme10 = Theme.objects.create(name="real-estate", id=10)                      
+        theme11 = Theme.objects.create(name="science-technology", id=11)
+        theme12 = Theme.objects.create(name="society", id=12)
+        theme13 = Theme.objects.create(name="sport", id=13)
+        theme14 = Theme.objects.create(name="stock", id=14)
+        theme15 = Theme.objects.create(name="NONE", id=15)
+        style1 = Style.objects.create(name="style1")
+        style2 = Style.objects.create(name="style2")
+        style3 = Style.objects.create(name="style3")
+        style4 = Style.objects.create(name="style4")
+        style1.css.save('style1.css', File(style_file1), save=True)
+        style2.css.save('style2.css', File(style_file1), save=True)
+        style3.css.save('style3.css', File(style_file1), save=True)
+        style4.css.save('style4.css', File(style_file1), save=True)
+        
+        theme1.styles.add(style4)
+        theme2.styles.add(style4)
+        theme3.styles.add(style1)
+        theme4.styles.add(style1)
+        theme5.styles.add(style2)
+        theme6.styles.add(style4)
+        theme7.styles.add(style4)
+        theme8.styles.add(style2)
+        theme9.styles.add(style4)
+        theme10.styles.add(style4)
+        theme11.styles.add(style3)
+        theme12.styles.add(style3)
+        theme13.styles.add(style1)
+        theme14.styles.add(style3)
+        theme15.styles.add(style3)
+
         profile1 = Profile.objects.create(user = user1)
         # cache = Cache.objects.create(user = profile1)
         profile2 = Profile.objects.create(user = user2)
@@ -58,14 +82,14 @@ class ModelTest(TestCase):
         profile1.theme.add(theme1)
         profile1.theme.add(theme2)
         profile1.theme.add(theme3)
-        product1 = Product.objects.create(title="product_1", html="<p>good day</p>", creator=profile1,style=style1, score=0.1, id=11, width=400)
-        product2 = Product.objects.create(title="product_2", html="<p>bad day</p>", creator=profile1,style=style2, score=0.9, id=12, width=400)
-        product3 = Product.objects.create(title="product_3", html="<p>cold day</p>", creator=profile1,style=style4, score=0.8, id=13, width=400)
-        product4 = Product.objects.create(title="product_4", html="<p>hot day</p>", creator=profile1,style=style5, score=0.7, id=14, width=400)
-        product5 = Product.objects.create(title="product_5", html="<p>hot day</p>", creator=profile1,style=style6, score=0.7, id=15, width=400)
-        product6 = Product.objects.create(title="product_6", html="<p>hot day</p>", creator=profile1,style=style1, score=0.7, id=16, width=400)
-        product7 = Product.objects.create(title="product_7", html="<p>hot day</p>", creator=profile1,style=style2, score=0.7, id=17, width=400)
-        product8 = Product.objects.create(title="Messi is Back!", html = htmlmessi, creator=profile1,style=style3, score=0.9, id=18, width=400)
+        product1 = Product.objects.create(title="product_1", html="<p>good day</p>", creator=profile1, score=0.1, id=11, width=400)
+        product2 = Product.objects.create(title="product_2", html="<p>bad day</p>", creator=profile1, score=0.9, id=12, width=400)
+        product3 = Product.objects.create(title="product_3", html="<p>cold day</p>", creator=profile1, score=0.8, id=13, width=400)
+        product4 = Product.objects.create(title="product_4", html="<p>hot day</p>", creator=profile1, score=0.7, id=14, width=400)
+        product5 = Product.objects.create(title="product_5", html="<p>hot day</p>", creator=profile1, score=0.7, id=15, width=400)
+        product6 = Product.objects.create(title="product_6", html="<p>hot day</p>", creator=profile1, score=0.7, id=16, width=400)
+        product7 = Product.objects.create(title="product_7", html="<p>hot day</p>", creator=profile1, score=0.7, id=17, width=400)
+        product8 = Product.objects.create(title="Messi is Back!", html = htmlmessi, creator=profile1, score=0.9, id=18, width=400)
         product8.html_file.save("html_18.html", ContentFile(htmlmessi))
         product1.image_src.save('good.jpg', File(img1), save=True)
         product2.image_src.save('bad.jpg', File(img2), save=True)
@@ -80,6 +104,11 @@ class ModelTest(TestCase):
         product2.theme.add(theme2)
         product8.theme.add(theme1)
         product8.theme.add(theme6)
+        product3.theme.add(theme1)
+        product4.theme.add(theme2)
+        product5.theme.add(theme2)
+        product6.theme.add(theme1)
+        product7.theme.add(theme6)
         card1 = Card.objects.create(creator=profile1, product=product1, title="positive", prompt="A positive people said...", head="head content", foot_text="foot content")
         card2 = Card.objects.create(creator=profile1, product=product2, title="negative", prompt="A negative people said...", head="head content", foot_text="foot content")
         card3 = Card.objects.create(creator=profile1, product=product3, title="cold", prompt="A cold people said...", head="head content", foot_text="foot content")
@@ -93,7 +122,7 @@ class ModelTest(TestCase):
         collection.cards.add(card2)
         collection.cards.add(card3)
         collection.cards.add(card4)
-        cache1 = Cache.objects.create(imgs_urls="[]", text="[\"我是小明，我今天会去买菜,买菜当然是最吼的呀\", \"我是小红，我今天要去钓鱼,我觉得我可以钓到大的。\"]", match_list="[]", user = profile1)
+        cache1 = Cache.objects.create(imgs_urls="[]", title="小明与小红", text="[\"我是小明，我今天会去买菜,买菜当然是最吼的呀\", \"我是小红，我今天要去钓鱼,我觉得我可以钓到大的。\"]", match_list="[]", user = profile1)
     
 
 #  用例编号: 001{前端} 101{后端}
@@ -302,7 +331,7 @@ class ModelTest(TestCase):
 #  测试经验总结:
 
     def test_register(self):
-        response = self.client.post('/api/user/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Pony','Sports'],'desc': 'love and peace'}, content_type="application/json")
+        response = self.client.post('/api/user/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['society','sport'],'desc': 'love and peace'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
 
@@ -388,16 +417,16 @@ class ModelTest(TestCase):
 #  测试结果综合分析及建议: 测试成功
 #  测试经验总结:
 
-    def test_store_passage(self):
-        response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
-        token = response.content
-        payload = jwt.decode(token, "Temage")
-        payloadID = payload['id']
-        self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/workflow/store_passage/', {'styles' : ['Pony','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
-        responseList = json.loads(responseAPI.content.decode('utf-8'))
-        self.assertEqual(len(responseList), 1)
-        self.assertEqual(responseAPI.status_code, 200)
+    # def test_store_passage(self):
+    #     response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
+    #     token = response.content
+    #     payload = jwt.decode(token, "Temage")
+    #     payloadID = payload['id']
+    #     self.assertEqual(payloadID, 2)
+    #     responseAPI = self.client.post('/api/workflow/store_passage/', {'styles' : ['society','sport'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+    #     responseList = json.loads(responseAPI.content.decode('utf-8'))
+    #     self.assertEqual(len(responseList), 1)
+    #     self.assertEqual(responseAPI.status_code, 200)
 
 
 #  用例编号: 111
@@ -484,7 +513,7 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/workflow/confirm_store/', {'productID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/workflow/confirm_store/', {'productID': '18', 'stars': '4.5', 'vector': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, content_type="application/json", HTTP_AUTHORIZATION=token)
         responseList = json.loads(responseAPI.content.decode('utf-8'))
         self.assertEqual(responseAPI.status_code, 200)
 
@@ -636,9 +665,9 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/workflow/post_picture/', {
-            "text": "我是小明，我今天会去买菜,买菜当然是最吼的呀\n我是小红，我今天要去钓鱼,我觉得我可以钓到大的。"
-            }, content_type="application/form-data", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/workflow/post_text/', {
+            "text": "我是小明，我今天会去买菜,买菜当然是最吼的呀\n我是小红，我今天要去钓鱼,我觉得我可以钓到大的。", "title": "小明与小红"
+            }, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)
 
 
@@ -668,7 +697,7 @@ class ModelTest(TestCase):
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
         with open('./test_file/img/good.jpg', 'rb') as fp:
-            responseAPI = self.client.post('/api/workflow/post_picture/', {'files':  fp}, HTTP_AUTHORIZATION=token)
+            responseAPI = self.client.post('/api/workflow/post_picture/', {'file':  fp}, HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)
 
 
@@ -697,30 +726,42 @@ class ModelTest(TestCase):
         payload = jwt.decode(token, "Temage")
         payloadID = payload['id']
         self.assertEqual(payloadID, 2)
-        responseAPI = self.client.post('/api/workflow/confirm_style/',content_type="application/form-data", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/workflow/confirm_style/', {"styles": ["sport", "society"]}, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)
 
 ################################################
 ##############    集成测试    ###################
 ################################################
     def test_integrated_explore(self):
-        response = self.client.post('/api/user/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['Pony','Sports'],'desc': 'love and peace'}, content_type="application/json")
+        response = self.client.post('/api/user/register/',  {'password': '123', 'username': 'tmg','email': '123123@qq.com','interest': ['society','sport'],'desc': 'love and peace'}, content_type="application/json")
         self.assertEqual(response.status_code, 200)
         response_login = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         self.assertEqual(response_login.status_code, 200)
         token = response_login.content
         response = self.client.get('/api/explore/', HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, 200)
+        # res = json.loads(response.content.decode('utf-8'))
+        # print(res)
         response = self.client.get('/api/explore/gallery/', HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, 200)
+        # res = json.loads(response.content.decode('utf-8'))
+        # print(res)
         response = self.client.get('/api/explore/gallery/more_cards/', HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, 200)
+        # res = json.loads(response.content.decode('utf-8'))
+        # print(res)
         response = self.client.get('/api/explore/collection/', HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, 200)
+        # res = json.loads(response.content.decode('utf-8'))
+        # print(res)
         response = self.client.get('/api/explore/get_recent/', HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, 200)
+        # res = json.loads(response.content.decode('utf-8'))
+        # print(res)
         response = self.client.post('/api/explore/product/', {'productID': '11'}, HTTP_AUTHORIZATION=token, content_type="application/json")
         self.assertEqual(response.status_code, 200)
+        # res = json.loads(response.content.decode('utf-8'))
+        # print(res)
         response = self.client.post('/api/explore/post_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, 200)
         response = self.client.post('/api/explore/cancel_collect/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
@@ -733,9 +774,35 @@ class ModelTest(TestCase):
         response = self.client.post('/api/user/login/', {'username': 'user1', 'password': '123'}, content_type="application/json")
         token = response.content
         self.assertEqual(response.status_code, 200)
-        responseAPI = self.client.post('/api/workflow/store_passage/', {'styles' : ['Pony','Sports'], 'res_html': htmlmessi, 'title': 'Messi is Back!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        responseAPI = self.client.post('/api/workflow/post_text/', {
+            "text": "我是小明，我今天会去买菜,买菜当然是最吼的呀\n我是小红，我今天要去钓鱼,我觉得我可以钓到大的。", "title": "小明与小红"
+            }, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)
-        responseAPI = self.client.post('/api/workflow/finished_work/', {'productID': '18'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        with open('./test_file/img/good.jpg', 'rb') as fp:
+            responseAPI = self.client.post('/api/workflow/post_picture/', {'file':  fp}, HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)
-        responseAPI = self.client.post('/api/workflow/confirm_store/', {'productID': '18', 'stars': '4.5'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        # response = json.loads(responseAPI.content.decode('utf-8'))
+        # print(response)
+        responseAPI = self.client.post('/api/workflow/push_match_event/', content_type="application/json", HTTP_AUTHORIZATION=token)
+        # match_list = json.loads(responseAPI.content.decode('utf-8'))
+        # print(match_list)
+        responseAPI = self.client.post('/api/workflow/confirm_style/', {"styles": ["sport", "society"]}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        
+        html = json.loads(responseAPI.content.decode('utf-8'))['html']
+        print(html)
+        self.assertEqual(responseAPI.status_code, 200)
+        responseAPI = self.client.post('/api/workflow/store_passage/', {'styles' : ['sport', 'society'], 'res_html': html, 'title': 'xiao ming!', 't_width': '200'}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        self.assertEqual(responseAPI.status_code, 200)
+        res = json.loads(responseAPI.content.decode('utf-8'))
+        print(res)
+        ID = res['ID']
+        responseAPI = self.client.post('/api/workflow/finished_work/', {'productID': ID}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        res = json.loads(responseAPI.content.decode('utf-8'))
+        print(res)
+        self.assertEqual(responseAPI.status_code, 200)
+        responseAPI = self.client.post('/api/workflow/confirm_store/', {'productID': ID, 'stars': '4.5', 'vector': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, content_type="application/json", HTTP_AUTHORIZATION=token)
+        # res = json.loads(responseAPI.content.decode('utf-8'))
+        # print(res)
+        self.assertEqual(responseAPI.status_code, 200)
+        responseAPI = self.client.post('/api/workflow/download_picture/', {'productID': ID}, content_type="application/json", HTTP_AUTHORIZATION=token)
         self.assertEqual(responseAPI.status_code, 200)

@@ -46,7 +46,8 @@ class Product(CommonThemes):
     vector = models.TextField(blank=True)
     score = models.FloatField(null=True)
     creator = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='products')
-    style = models.ForeignKey(Style, on_delete=models.DO_NOTHING, related_name='products')
+    # style = models.ForeignKey(Style, on_delete=models.DO_NOTHING, related_name='products')
+    theme = models.ManyToManyField(Theme, related_name='products')
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     is_finished = models.BooleanField(default=0)
@@ -95,6 +96,7 @@ class Collection(models.Model):
 
 class Cache(models.Model):
     imgs_urls = models.TextField(blank=True)
+    title = models.TextField(blank=True)
     text = models.TextField(blank=True)
     user = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='cache')
     match_list = models.TextField(blank=True)

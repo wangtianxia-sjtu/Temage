@@ -19,7 +19,8 @@ class HistoryHandler(RequestHandler):
         self.model = load_model('./model/histories/histories.h5')
         self.data = json_decode(self.request.body)
     def post(self, *args, **kwargs):
-        histories = np.array(self.data.historys)
+        print(self.data)
+        histories = np.array(self.data['histories'])
         result = self.model.predict([histories])
         self.finish(json.dumps(result.tolist()))
 

@@ -21,6 +21,7 @@ from django.urls import path
 from django.urls import include
 
 from django.conf.urls import url
+from django.views.static import serve
 
 
 explore_patterns = [
@@ -65,5 +66,6 @@ api_patterns = [
 
 
 urlpatterns = [
-    path('api/', include(api_patterns))
+    path('api/', include(api_patterns)),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root':settings.MEDIA_ROOT})
 ]
